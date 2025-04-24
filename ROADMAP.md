@@ -1,59 +1,87 @@
 # CI/CD Automation Labs – Roadmap
 
-This roadmap outlines the structure and progression of the **CI/CD Automation Labs** repository. These labs teach continuous integration and continuous deployment using industry-standard tools like **GitHub Actions**, **Jenkins**, **Docker**, and **Kubernetes**.
+Welcome to the master roadmap for the **CI/CD Automation Labs** repository. This roadmap organizes labs by CI/CD tool to provide deep, hands-on experience in building, testing, and deploying software with real-world workflows.
 
 ---
 
-## 🛠️ Phase 1: CI with GitHub Actions
-Build and test applications automatically on every push.
+## 🚦 GitHub Actions Labs
+Automate workflows with GitHub-native CI/CD pipelines.
 
-| Lab | Title                                | Focus                             |
-|-----|--------------------------------------|------------------------------------|
-| 01  | GitHub Actions: Hello World          | Basic workflow, push trigger       |
-| 02  | Python Test Workflow                 | Run `pytest`, linting, matrix CI   |
-| 03  | Docker Build & Push                  | Build and publish Docker image     |
-| 04  | Secrets & Environment Variables      | Secure workflows with secrets      |
-
----
-
-## ⚙️ Phase 2: Jenkins Fundamentals
-Set up your own CI server with Jenkins for advanced pipeline control.
-
-| Lab | Title                                | Focus                             |
-|-----|--------------------------------------|------------------------------------|
-| 05  | Jenkins: Install and Setup           | Jenkins server setup               |
-| 06  | Freestyle Job: Build Python Project  | Manual build job                   |
-| 07  | Pipeline Job: Jenkinsfile Intro      | Declarative pipeline syntax        |
-| 08  | Trigger Builds with Webhooks         | GitHub webhook integration         |
+| Lab | Title                                | Focus                                  |
+|-----|--------------------------------------|----------------------------------------|
+| 01  | Hello World Workflow                 | Workflow structure, push trigger       |
+| 02  | Python CI Workflow                   | `pytest`, linting, test matrix         |
+| 03  | Docker Build & Push                  | DockerHub integration                  |
+| 04  | Deploy to GitHub Pages               | Static site CD                         |
+| 05  | Scheduled Jobs & Cron Triggers       | Automated scheduled workflows          |
+| 06  | Environment Secrets & Context        | Secure workflows, env usage            |
+| 07  | Workflow Artifacts & Caching         | Caching, artifact retention            |
+| 08  | Monorepo Multi-Project Strategy      | Multi-workspace automation             |
+| 09  | Reusable Workflow Templates          | DRY pipelines across projects          |
+| 10  | Canary Deployment with GitHub Actions| Advanced deployment strategies         |
 
 ---
 
-## 🚀 Phase 3: CD and Deployment Automation
-Automate deployments to cloud and container platforms.
+## 🧰 Jenkins Labs
+Use Jenkins for local or enterprise-grade CI/CD pipelines.
 
-| Lab | Title                                | Focus                             |
-|-----|--------------------------------------|------------------------------------|
-| 09  | Docker Compose Deploy via CI         | Multi-container CI/CD pipeline     |
-| 10  | K8s Deploy via GitHub Actions        | Deploy to Kubernetes (Minikube)    |
-| 11  | ArgoCD: GitOps Deployment            | GitOps with Helm + ArgoCD          |
-| 12  | Canary Release with GitHub Actions   | CD strategy using release channels |
-
----
-
-## 🔄 Optional Advanced Labs (Future)
-- GitLab CI/CD pipelines
-- Spinnaker multi-cloud CD
-- Jenkins shared libraries
-- CI/CD performance optimization
+| Lab | Title                                | Focus                                  |
+|-----|--------------------------------------|----------------------------------------|
+| 01  | Jenkins Install & Setup              | Local Jenkins or Docker install        |
+| 02  | Freestyle Job: Python Test           | Manual job execution                   |
+| 03  | Declarative Pipeline with Jenkinsfile| Groovy pipelines                       |
+| 04  | SCM Polling and GitHub Webhooks      | Triggering builds from repo changes    |
+| 05  | Build Docker Images in Pipeline      | Jenkins-Docker integration             |
+| 06  | Parallel & Conditional Stages        | Advanced pipeline logic                |
+| 07  | Use Shared Libraries in Jenkins      | Reusable pipeline code                 |
+| 08  | Secure Secrets with Jenkins Credentials| Masked secrets, credentials plugin     |
+| 09  | Slack Notification Integration       | Pipeline notifications                 |
+| 10  | Deploy to Remote Server via SSH      | Delivery step with SSH and rsync       |
 
 ---
 
-## 📌 How to Use This Roadmap
-- Follow the labs sequentially for full CI/CD mastery
-- Each lab is self-contained with instructions and validation
-- Real DevOps tools and real-world scenarios used
+## 🐳 Docker-CD Labs
+Use Docker and Docker Compose to manage deployments.
+
+| Lab | Title                                | Focus                                  |
+|-----|--------------------------------------|----------------------------------------|
+| 01  | Dockerfile CI Build                  | Build/test Docker images               |
+| 02  | Docker Compose Local CI              | Compose up/down in CI pipeline         |
+| 03  | Docker Compose for Dev Environments  | Local dev automation                   |
+| 04  | GitHub Actions + Compose Deploy      | Multi-container CI/CD                  |
+| 05  | Compose with Secrets & Volumes       | Security, persistence                  |
+| 06  | Service Health Checks & Retry        | Health checks in orchestration         |
+| 07  | CI Workflow for Microservices        | Test & deploy multi-service stack      |
+| 08  | Push Compose Stack to AWS ECS        | Docker + ECS deployment                |
+| 09  | CI Linting for Dockerfiles           | Best practices validation              |
+| 10  | Compose Logs Aggregation Setup       | Centralized logging during CD         |
 
 ---
 
-**Integrate. Test. Deploy. Automate everything.** 🚀⚙️📦
+## 🌐 ArgoCD Labs (GitOps)
+Learn GitOps by automating Kubernetes deployments with ArgoCD.
 
+| Lab | Title                                | Focus                                  |
+|-----|--------------------------------------|----------------------------------------|
+| 01  | ArgoCD Install on Minikube           | ArgoCD local environment setup         |
+| 02  | Deploy K8s App via Git Repo          | GitOps fundamentals                    |
+| 03  | Use Helm Charts with ArgoCD          | Helm + GitOps CD flow                  |
+| 04  | App Rollback with GitOps             | Revisions and rollbacks                |
+| 05  | Sync Policies and Auto Deployments   | Sync policies, self-healing apps       |
+| 06  | Add External Secrets to CD           | ArgoCD with Sealed Secrets/ESO         |
+| 07  | Deploy to Staging + Production       | Multi-env pipelines                    |
+| 08  | Promote Images from CI to ArgoCD     | CI/CD handoff                          |
+| 09  | Notifications via ArgoCD Notifiers   | CD event alerting                      |
+| 10  | Secure ArgoCD with RBAC & SSO        | Team-based access control              |
+
+---
+
+## 🧠 Suggested Learning Flow
+- Start with **GitHub Actions** for basic CI concepts
+- Advance to **Jenkins** for custom pipelines and agent control
+- Explore **Docker-CD** for containerized CD pipelines
+- Finish with **ArgoCD** to adopt a GitOps deployment model
+
+---
+
+**Build pipelines. Automate delivery. Deploy with confidence.** 🚀
