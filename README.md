@@ -1,19 +1,12 @@
-# CI/CD Automation Labs
+# CI/CD Automation Labs Repository
 
-Welcome to the **CI/CD Automation Labs** repository — your hands-on guide to mastering **continuous integration** and **continuous deployment** using GitHub Actions, Jenkins, Docker, Kubernetes, and more.
-
-This repo is designed for DevOps learners and practitioners who want to build, test, and deploy applications automatically and reliably.
+Welcome to the **CI/CD Automation Labs** — a practical, tool-focused repository designed to help you master continuous integration and deployment using **real-world DevOps workflows**. Whether you're working with GitHub Actions, Jenkins, ArgoCD, or Docker, this repo has you covered with **structured labs** per tool.
 
 ---
 
-## 🚀 What You'll Learn
+## 🧩 What's Inside?
 
-By completing these labs, you'll gain practical experience in:
-- Automating builds and tests using GitHub Actions
-- Creating pipelines and build jobs in Jenkins
-- Deploying applications with Docker Compose and Kubernetes
-- Implementing GitOps using ArgoCD
-- Managing CI/CD secrets and environment configs securely
+Each CI/CD technology has its **own top-level folder**, containing multiple **in-depth labs**. Labs are self-contained, progressive, and built to reflect actual scenarios you’ll encounter in professional pipelines.
 
 ---
 
@@ -21,65 +14,63 @@ By completing these labs, you'll gain practical experience in:
 
 ```bash
 CI-CD-Automation-Labs/
-├── LAB01-GitHub-Actions-Hello-World/
-├── LAB02-Python-Test-Workflow/
-├── LAB03-Docker-Build-And-Push/
-├── LAB04-Secrets-And-Env-Vars/
-├── LAB05-Jenkins-Install-And-Setup/
-├── LAB06-Jenkins-Freestyle-Job/
-├── LAB07-Jenkinsfile-Pipeline/
-├── LAB08-Jenkins-GitHub-Webhook/
-├── LAB09-Docker-Compose-CI-Deploy/
-├── LAB10-K8s-GitHubActions-Deploy/
-├── LAB11-ArgoCD-GitOps-Deploy/
-├── LAB12-Canary-Release-GitHubActions/
-├── ROADMAP.md
-└── README.md
+├── GitHub-Actions/          # GitHub Actions CI/CD Labs
+│   ├── LAB01-Hello-World/
+│   └── ...
+│
+├── Jenkins/                # Jenkins CI/CD Labs
+│   ├── LAB01-Install-And-Setup/
+│   └── ...
+│
+├── Docker-CD/              # Docker-based CD Labs
+│   ├── LAB01-Build-Test-Push/
+│   └── ...
+│
+├── ArgoCD/                 # GitOps & ArgoCD Labs
+│   ├── LAB01-Intro-GitOps/
+│   └── ...
+│
+├── ROADMAP.md              # Full lab index and path
+└── README.md               # This file
 ```
 
 Each lab contains:
-- A `README.md` with goals, setup steps, and validation
-- Code/scripts/infrastructure used for automation
-- Sample apps or services where applicable
+- A `README.md` with learning objectives, instructions, and cleanup
+- Scripts/configs/pipeline definitions
+- Sample apps or services when applicable
 
 ---
 
-## 🧠 Learning Path
+## 🧠 Who Is This For?
 
-Labs are organized into three main phases:
-
-1. **GitHub Actions CI Labs (LAB01–04)**
-2. **Jenkins CI Pipelines (LAB05–08)**
-3. **CD & Cloud Deployments (LAB09–12)**
-
-Follow the [ROADMAP.md](./ROADMAP.md) to track your journey and progress.
+These labs are designed for:
+- DevOps engineers and SREs
+- Developers looking to automate deployments
+- Teams standardizing CI/CD workflows
+- Students and educators learning infrastructure automation
 
 ---
 
 ## 🧰 Prerequisites
 
-- Git and GitHub knowledge
-- Docker installed and running
-- Python 3.8+ (for testing labs)
-- Minikube or Kubernetes cluster (for LAB10+)
-- Optional: Jenkins installed locally or on VM
+- Familiarity with Git and basic command-line usage
+- GitHub account and access to a Jenkins host (for Jenkins labs)
+- Docker and Python installed locally
+- Kubernetes or Minikube cluster for ArgoCD labs
+
+---
+
+## 🗺 Roadmap
+See [`ROADMAP.md`](./ROADMAP.md) for an overview of all labs and suggested progression.
 
 ---
 
 ## 💬 Contributing
-
-We welcome community contributions:
+Want to contribute a lab?
 - Fork the repo
-- Use the lab format and folder naming convention
-- Submit a PR with your lab, improvement, or fix
+- Follow the lab naming convention (e.g., `LAB05-Docker-Build`)
+- Submit a pull request with your additions
 
 ---
 
-## 🙏 Acknowledgments
-- Jenkins and GitHub Actions open-source contributors
-- Docker, Kubernetes, ArgoCD, and CI/CD communities
-- Educators and DevOps engineers everywhere
-
----
-
-**Build fast. Test constantly. Deploy confidently.** 💡🚀📦
+**Automate. Integrate. Deliver. One lab at a time.** 🛠️🚀📦
