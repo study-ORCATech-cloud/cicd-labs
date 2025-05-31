@@ -1,0 +1,95 @@
+pipeline {
+    agent any // For this lab, basic agent is fine. Docker agent might be used if tools like linters were containerized.
+
+    // TODO_PARAMETERS: Define boolean parameters to control stage execution.
+    // Add two boolean parameters: 
+    // 1. Name: RUN_UNIT_TESTS, DefaultValue: true, Description: 'Run unit tests for the Python app'
+    // 2. Name: RUN_LINTING, DefaultValue: false, Description: 'Run placeholder linting checks'
+    parameters {
+        // Example: booleanParam(name: 'EXAMPLE_PARAM', defaultValue: true, description: 'An example boolean parameter')
+    }
+
+    environment {
+        APP_PATH = 'Jenkins/LAB06-Parallel-And-Conditional/app'
+    }
+
+    stages {
+        stage('Checkout SCM') {
+            steps {
+                echo 'Checking out code...'
+                checkout scm
+                script {
+                    sh 'echo "Workspace content after checkout:" && ls -la'
+                    sh 'echo "App directory content:" && ls -la ${APP_PATH}'
+                }
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                echo 'Installing Python dependencies...'
+                // Using the requirements file from the Lab 06 app directory
+                sh "python -m pip install --upgrade pip"
+                sh "pip install -r ${APP_PATH}/requirements.txt"
+            }
+        }
+        
+        stage('Run Main Python Script (Always Runs)') {
+            steps {
+                echo 'Running the main Python script for Lab 06...'
+                sh "python ${APP_PATH}/main.py"
+            }
+        }
+
+        // TODO_PARALLEL_STAGES: Define a parent stage that contains parallel stages for Tests and Linting.
+        // Name this parent stage 'Quality Checks (Parallel)'.
+        // Inside this stage, create a `parallel` block.
+        stage('PARENT_STAGE_FOR_PARALLEL_BLOCK') { // Replace this placeholder stage name
+            // Inside the `parallel` block, define two child stages:
+            // 1. 'Unit Tests'
+            // 2. 'Code Linting (Placeholder)'
+            steps { // This 'steps' block might not be needed if using a `parallel` directive directly
+                echo 'This is a placeholder. Remove this and implement the parallel block as per instructions.'
+                // parallel (
+                //     stage('Unit Tests') { ... },
+                //     stage('Code Linting (Placeholder)') { ... }
+                // )
+            }
+        }
+
+        // Note: The individual 'Unit Tests' and 'Code Linting' stages defined below are meant to be 
+        // MOVED INSIDE the `parallel` block you create above.
+        // The `when` conditions will then apply to them within their parallel execution context.
+
+        // This stage is intended to be one of the stages INSIDE the parallel block.
+        stage('Unit Tests') { 
+            // TODO_UNIT_TESTS_CONDITION: Add a `when` directive to run this stage only if RUN_UNIT_TESTS parameter is true.
+            // when { expression { params.RUN_UNIT_TESTS == true } }
+            steps {
+                echo 'Running Python unit tests for Lab 06...'
+                // TODO_UNIT_TESTS_COMMAND: Add the shell command to run pytest against tests in app/tests/.
+                // sh 'pytest ${APP_PATH}/tests/'
+                sh '' // Placeholder
+            }
+        }
+
+        // This stage is intended to be one of the stages INSIDE the parallel block.
+        stage('Code Linting (Placeholder)') {
+            // TODO_LINTING_CONDITION: Add a `when` directive to run this stage only if RUN_LINTING parameter is true.
+            // when { expression { params.RUN_LINTING == true } }
+            steps {
+                echo 'Simulating code linting (e.g., with pylint, flake8)...
+                // TODO_LINTING_COMMAND (Optional): For this lab, a simple echo is fine.
+                // In a real scenario, you'd run a linter: sh 'pylint ${APP_PATH}/*.py' or similar.
+                sh 'echo "Linting checks would run here. No actual linter configured for this lab."'
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline for Lab 06 finished.'
+            cleanWs()
+        }
+    }
+} 

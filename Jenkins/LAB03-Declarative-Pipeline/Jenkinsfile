@@ -1,0 +1,76 @@
+pipeline {
+    // TODO_AGENT: Specify the agent for this pipeline. 
+    // For this lab, 'agent any' is suitable, meaning Jenkins can use any available agent (including the controller itself).
+    // Later labs might explore specific agents like docker containers.
+    agent any // Replace this line if you have a specific agent setup, or leave as is for now.
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // This step checks out the code from the SCM (Git) configured in the Jenkins job.
+                // For Declarative Pipeline, the checkout is often handled automatically by Jenkins
+                // when 'Pipeline script from SCM' is used. However, explicitly adding a `checkout scm`
+                // step is good practice for clarity and if you need to customize checkout behavior later.
+                echo 'Checking out code...'
+                // TODO_CHECKOUT: If your SCM needs specific checkout parameters, add them here. 
+                // For a basic setup where the Jenkins job points to your Git repo and this Jenkinsfile,
+                // an explicit `checkout scm` might not be strictly necessary if the implicit checkout works.
+                // However, let's add it for best practice. If your Jenkins job SCM config is minimal,
+                // `checkout scm` will use those settings. 
+                // If you used "Check out to a sub-directory" in Lab 02 (e.g., lab02_sources) and want 
+                // similar behavior here managed by the Jenkinsfile instead of UI, you'd use 
+                // `checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'YOUR_REPO_URL']]], 
+                // extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'lab03_sources']])`
+                // For this lab, a simple `checkout scm` should suffice if the Jenkins job is configured correctly.
+                checkout scm
+                script {
+                    // Optional: List files to verify checkout for the student
+                    sh 'echo "Workspace content after checkout:" && ls -la'
+                    // If you checked out to a sub-directory via UI in job config, this ls might be less informative
+                    // unless you `cd` into it. If `checkout scm` is used, it checks into workspace root.
+                }
+            }
+        }
+        stage('Install Dependencies') {
+            steps {
+                echo 'Installing Python dependencies...'
+                // TODO_INSTALL_DEPS: Write the shell command(s) to install dependencies.
+                // Consider:
+                // 1. How do you install packages using pip?
+                // 2. What file lists the dependencies?
+                // 3. Where is this file located relative to your workspace root after checkout?
+                // 4. Is it good practice to upgrade pip first?
+                sh '' // Placeholder for student to fill
+            }
+        }
+        stage('Run Python Script') {
+            steps {
+                echo 'Running the main Python script...'
+                // TODO_RUN_SCRIPT: Write the shell command to execute the main Python script.
+                // Consider:
+                // 1. What command is used to run a Python script?
+                // 2. What is the path to the `main.py` script relative to your workspace root?
+                sh '' // Placeholder for student to fill
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                echo 'Running Python tests with pytest...'
+                // TODO_RUN_TESTS: Write the shell command to run pytest.
+                // Consider:
+                // 1. How do you invoke pytest?
+                // 2. Does pytest need to be pointed to a specific directory for tests?
+                // 3. What is the path to your tests directory relative to your workspace root?
+                sh '' // Placeholder for student to fill
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline finished.'
+            // TODO_CLEANUP_WORKSPACE (Optional): Add a step to clean up the workspace if desired.
+            // For example: cleanWs()
+        }
+    }
+} 

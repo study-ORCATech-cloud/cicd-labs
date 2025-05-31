@@ -27,8 +27,8 @@ Use Jenkins for local or enterprise-grade CI/CD pipelines.
 
 | Lab | Title                                | Focus                                  |
 |-----|--------------------------------------|----------------------------------------|
-| 01  | Jenkins Install & Setup              | Local Jenkins or Docker install        |
-| 02  | Freestyle Job: Python Test           | Manual job execution                   |
+| 01  | My First Jenkins Job - Freestyle 'Hello World' | Basic UI interaction, Freestyle job, manual build, console output |
+| 02  | Freestyle Job: Python Test           | Manual job execution, SCM basics       |
 | 03  | Declarative Pipeline with Jenkinsfile| Groovy pipelines                       |
 | 04  | SCM Polling and GitHub Webhooks      | Triggering builds from repo changes    |
 | 05  | Build Docker Images in Pipeline      | Jenkins-Docker integration             |

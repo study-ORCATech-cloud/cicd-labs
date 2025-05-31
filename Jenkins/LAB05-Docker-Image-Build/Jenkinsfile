@@ -1,0 +1,143 @@
+pipeline {
+    // TODO_AGENT_SETUP: Define an appropriate agent that has Docker capabilities.
+    // Option 1: If your Jenkins controller or a statically defined agent has Docker installed
+    // and the Jenkins user can access it, `agent any` might work. Ensure Docker is in PATH.
+    // agent any
+
+    // Option 2: Use a Docker agent to run the pipeline stages. Requires Docker Pipeline plugin.
+    // This ensures Docker CLI is available. You also need to make the host's Docker socket
+    // available to this containerized agent if you want to build images directly on the host.
+    agent {
+        docker {
+            image 'docker:24.0-git' // A Docker image that includes Docker CLI and Git
+            args '-v /var/run/docker.sock:/var/run/docker.sock -v /tmp:/tmp' // Mount Docker socket and a temp volume
+            // The user inside this container also needs permissions for the Docker socket.
+            // You might need to add: `sudo usermod -aG docker jenkins` on the host if Jenkins runs as 'jenkins' user,
+            // or ensure the user running the container (often root) has permissions.
+        }
+    }
+    // For simplicity in this lab, if the student's Jenkins setup (from install-and-setup.md)
+    // already runs Jenkins in Docker with the socket mounted, `agent any` might be sufficient
+    // IF the Jenkins container itself has the `docker` CLI. 
+    // The Docker agent approach above is more robust for ensuring Docker CLI availability.
+    // Students should pick or adapt one based on their Jenkins setup.
+
+    environment {
+        // TODO_IMAGE_NAME: Define a variable for your Docker image name.
+        // Example: 'your-dockerhub-username/lab05-flask-app' or just 'lab05-flask-app' for local.
+        IMAGE_NAME = '' 
+        // TODO_IMAGE_TAG: Define a variable for your Docker image tag.
+        // Using the build number makes tags unique for each build.
+        IMAGE_TAG = "0.1.${env.BUILD_NUMBER}"
+        // DOCKERFILE_PATH: Path to the Dockerfile within the workspace.
+        DOCKERFILE_PATH = 'Jenkins/LAB05-Docker-Image-Build/app' // Correct path to Dockerfile directory
+    }
+
+    stages {
+        stage('Checkout SCM') {
+            steps {
+                echo 'Checking out code...'
+                checkout scm
+                script {
+                    sh 'echo "Workspace content after checkout:" && ls -la'
+                    sh 'echo "App directory content:" && ls -la ${DOCKERFILE_PATH}'
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                echo "Building Docker image: ${IMAGE_NAME}:${IMAGE_TAG}..."
+                // TODO_BUILD_IMAGE: Use the `docker.build()` command to build your image.
+                // You'll need to specify the image name (and tag) and the path to the Dockerfile context.
+                // Example: docker.build("${IMAGE_NAME}:${IMAGE_TAG}", "--pull -f ${DOCKERFILE_PATH}/Dockerfile ${DOCKERFILE_PATH}")
+                // The `--pull` flag ensures the base image is updated.
+                // The first argument to `docker.build` is the image name.
+                // The second (optional) argument contains additional arguments for `docker build` CLI,
+                // like `-f` for Dockerfile location and the context path.
+                script {
+                    // Placeholder for student to fill
+                    // docker.build(...) 
+                }
+            }
+        }
+
+        stage('Scan Docker Image (Placeholder)') {
+            steps {
+                echo "(Placeholder) In a real pipeline, you would scan the image for vulnerabilities here."
+                echo "Tools like Trivy, Clair, or services like Docker Hub scanning could be used."
+            }
+        }
+
+        stage('Test Run Docker Image (Optional)') {
+            when {
+                // Only run this stage if IMAGE_NAME is set (i.e., not empty)
+                expression { env.IMAGE_NAME != '' }
+            }
+            steps {
+                echo "Attempting to run the Docker image (if built): ${IMAGE_NAME}:${IMAGE_TAG}..."
+                // TODO_RUN_IMAGE: Write a shell command to run your built Docker image.
+                // Remember to map the container's exposed port (5000) to a host port (e.g., 5001).
+                // Run it in detached mode (`-d`) and ensure it's removed after stopping (`--rm`).
+                // Give it a name for easier cleanup.
+                // Example: sh 'docker run -d -p 5001:5000 --name lab05app ${IMAGE_NAME}:${IMAGE_TAG}'
+                // Add a short sleep to let the app start, then curl it, then stop and remove.
+                sh '' // Placeholder for student to fill
+                script {
+                    // Example of further steps after sh 'docker run ...':
+                    // sleep 10 
+                    // sh 'curl http://localhost:5001'
+                    // sh 'docker logs lab05app' 
+                    // sh 'docker stop lab05app'
+                    // Note: `docker stop lab05app` might be sufficient as `--rm` is in the run command.
+                    // However, explicit stop is good practice before relying on --rm for cleanup in scripts.
+                }
+            }
+        }
+
+        stage('Push Docker Image (Optional/Advanced)') {
+            when {
+                // Only run this stage if IMAGE_NAME is set and, for example, if building on the main branch.
+                // expression { env.IMAGE_NAME != '' && env.BRANCH_NAME == 'main' } 
+                // For simplicity in this lab, we'll just check if IMAGE_NAME is set.
+                // Students will need to configure credentials in Jenkins for this to work.
+                expression { env.IMAGE_NAME != '' }
+            }
+            steps {
+                echo "(Optional) Pushing Docker image: ${IMAGE_NAME}:${IMAGE_TAG}..."
+                echo "Ensure Docker Hub (or other registry) credentials are configured in Jenkins."
+                // TODO_PUSH_IMAGE: Use `docker.withRegistry()` to push the image.
+                // You'll need to specify the registry URL (empty for Docker Hub) and Jenkins credential ID.
+                // Example for Docker Hub (assuming credential ID 'dockerhub-credentials'):
+                // docker.withRegistry('', 'dockerhub-credentials') {
+                //    docker.image("${IMAGE_NAME}:${IMAGE_TAG}").push()
+                // }
+                // This stage is optional. Students may not have a registry or credentials configured.
+                script {
+                    // Placeholder for student to fill
+                    // Example: (Only if student has set up credentials in Jenkins)
+                    // if (env.IMAGE_NAME.contains("/")) { // Basic check if it looks like a Docker Hub username/repo
+                    //    docker.withRegistry('', 'your-jenkins-docker-credential-id') {
+                    //        docker.image("${IMAGE_NAME}:${IMAGE_TAG}").push()
+                    //        docker.image("${IMAGE_NAME}").push('latest') // Optionally push a 'latest' tag too
+                    //    }
+                    // } else {
+                    //    echo "Skipping push: IMAGE_NAME does not look like a full repository name (e.g., user/repo)."
+                    // }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline finished.'
+            // TODO_CLEANUP_RUNNING_CONTAINER (Optional): If the test container was started and not properly stopped/removed.
+            // sh 'docker stop lab05app || true' 
+            // sh 'docker rm lab05app || true'
+            // Using '|| true' to prevent pipeline failure if container doesn't exist.
+            // This is more relevant if the --rm flag wasn't used or if the stop failed.
+            echo "Remember to manually prune unused Docker images on the agent if needed: docker image prune -a -f"
+        }
+    }
+} 
