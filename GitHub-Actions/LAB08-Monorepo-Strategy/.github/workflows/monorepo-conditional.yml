@@ -1,0 +1,99 @@
+name: Monorepo Conditional Builds
+
+# TODO: Configure the workflow to trigger on push events to the 'main' branch.
+# Only trigger if changes occur in 'service-a/**', 'service-b/**', or 'common-lib/**'.
+on:
+  push:
+    branches:
+      - main
+    paths:
+      #- 'service-a/**'
+      #- 'service-b/**'
+      #- 'common-lib/**'
+
+jobs:
+  filter_paths:
+    runs-on: ubuntu-latest
+    outputs:
+      service_a_changed: ${{ steps.filter.outputs.service_a }}
+      service_b_changed: ${{ steps.filter.outputs.service_b }}
+      common_lib_changed: ${{ steps.filter.outputs.common_lib }}
+      any_service_changed: ${{ steps.filter.outputs.any_service }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Calculate changed paths
+        # TODO: Use the 'dorny/paths-filter@v2' action to detect changes.
+        # Configure it to check for changes in 'service-a', 'service-b', and 'common-lib'.
+        # Also create a filter for 'any_service' that triggers if any of the above change.
+        uses: # dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            # service_a: 
+            #  - 'service-a/**'
+            # service_b:
+            #  - 'service-b/**'
+            # common_lib:
+            #  - 'common-lib/**'
+            # any_service:
+            #  - 'service-a/**'
+            #  - 'service-b/**'
+            #  - 'common-lib/**'
+
+  build_service_a:
+    # TODO: This job should only run if files in 'service-a/**' were changed.
+    # It also needs the output from the 'filter_paths' job.
+    needs: filter_paths
+    if: # needs.filter_paths.outputs.service_a_changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Service A
+        run: |
+          echo "Building Service A..."
+          # Add build commands for Service A here, e.g.:
+          # cd service-a
+          # python app_a.py
+
+  build_service_b:
+    # TODO: This job should only run if files in 'service-b/**' were changed.
+    # It also needs the output from the 'filter_paths' job.
+    needs: filter_paths
+    if: # needs.filter_paths.outputs.service_b_changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Service B
+        run: |
+          echo "Building Service B..."
+          # Add build commands for Service B here, e.g.:
+          # cd service-b
+          # python app_b.py
+
+  build_common_lib:
+    # TODO: This job should only run if files in 'common-lib/**' were changed.
+    # It also needs the output from the 'filter_paths' job.
+    needs: filter_paths
+    if: # needs.filter_paths.outputs.common_lib_changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Common Lib
+        run: |
+          echo "Building Common Lib..."
+          # Add build/test commands for Common Lib here, e.g.:
+          # cd common-lib
+          # python utils.py
+
+  run_integration_tests:
+    # TODO: This job should run if files in ANY of the specified services/libs changed.
+    # It also needs the output from the 'filter_paths' job.
+    needs: filter_paths
+    if: # needs.filter_paths.outputs.any_service_changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run Integration Tests
+        run: |
+          echo "Running integration tests because a relevant service or library changed..."
+          # Add integration test commands here 

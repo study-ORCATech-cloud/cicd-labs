@@ -1,0 +1,96 @@
+name: Canary and Production Deployment
+
+# TODO: Configure this workflow to be manually triggered (workflow_dispatch).
+# It should accept inputs:
+#   - 'version': description 'The application version to deploy (e.g., v1.0.1)', required: true, type: string
+#   - 'deploy_target': description 'Target environment', required: true, type: choice, options: [canary, production]
+on:
+  workflow_dispatch:
+    inputs:
+      # version:
+      #   description: 'The application version to deploy (e.g., v1.0.1)'
+      #   required: true
+      #   type: string
+      # deploy_target:
+      #   description: 'Target environment'
+      #   required: true
+      #   type: choice
+      #   options:
+      #     - canary
+      #     - production
+
+jobs:
+  deploy_canary:
+    # TODO: This job should only run if the 'deploy_target' input is 'canary'.
+    if: # github.event.inputs.deploy_target == 'canary'
+    # TODO: Assign this job to the 'canary' GitHub environment.
+    # Note: The student needs to create this environment in repository settings.
+    environment:
+      name: # canary
+      url: # https://my-app-canary.example.com (optional placeholder URL)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Update version file for Canary
+        # TODO: Update the app/version.txt file with the version from the workflow input.
+        run: |
+          echo "Updating app/version.txt to ${{ github.event.inputs.version }} for Canary deployment"
+          # echo "${{ github.event.inputs.version }}" > app/version.txt
+          # cat app/version.txt
+
+      - name: Simulate Canary Deployment
+        # TODO: Echo a message indicating deployment of the specified version to the Canary environment.
+        run: |
+          echo "🚀 Deploying version ${{ github.event.inputs.version }} to CANARY environment..."
+          # Imagine actual deployment commands here
+          echo "✅ Version ${{ github.event.inputs.version }} live on Canary!"
+
+      # - name: Placeholder for Canary Tests/Monitoring
+      #   run: |
+      #     echo "🔍 Running automated tests/monitoring on Canary for version ${{ github.event.inputs.version }}..."
+      #     echo "👍 Canary tests passed!"
+
+  # Optional: A job to wait for manual approval before promoting to production
+  # This is more aligned with how environments with Protection Rules work (manual approval is part of the environment setup)
+  # gatekeeper_to_production:
+  #   if: github.event.inputs.deploy_target == 'production' # Or a specific input for promotion
+  #   runs-on: ubuntu-latest
+  #   environment: 
+  #     name: production # Student must configure this environment with a manual approval requirement
+  #   steps:
+  #     - name: Manual Approval Gate
+  #       run: echo "Waiting for manual approval to deploy version ${{ github.event.inputs.version }} to Production..."
+
+  deploy_production:
+    # TODO: This job should only run if the 'deploy_target' input is 'production'.
+    if: # github.event.inputs.deploy_target == 'production'
+    # TODO: This job could 'need' the canary job if the flow is strictly canary -> optional_approval -> production.
+    # For this lab, we make it directly triggerable via 'deploy_target' for simplicity in demonstrating environments.
+    # needs: [deploy_canary] # Or needs: [gatekeeper_to_production] if using the gatekeeper job
+    # TODO: Assign this job to the 'production' GitHub environment.
+    # Note: The student needs to create this environment and ideally configure it with a manual approval protection rule.
+    environment:
+      name: # production
+      url: # https://my-app.example.com (optional placeholder URL)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        # Note: In a real scenario, you'd likely use an artifact from a build job
+        # or ensure the correct commit SHA is checked out if versioning is git-tag based.
+
+      - name: Update version file for Production
+        # TODO: Update the app/version.txt file with the version from the workflow input.
+        run: |
+          echo "Updating app/version.txt to ${{ github.event.inputs.version }} for Production deployment"
+          # echo "${{ github.event.inputs.version }}" > app/version.txt
+          # cat app/version.txt
+
+      - name: Simulate Production Deployment
+        # TODO: Echo a message indicating deployment of the specified version to the Production environment.
+        run: |
+          echo "🚀 Deploying version ${{ github.event.inputs.version }} to PRODUCTION environment..."
+          # Imagine actual deployment commands here
+          echo "✅ Version ${{ github.event.inputs.version }} live on Production!" 

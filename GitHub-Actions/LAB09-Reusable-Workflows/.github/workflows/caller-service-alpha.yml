@@ -1,0 +1,31 @@
+name: Caller for Service Alpha
+
+# TODO: Configure this workflow to trigger on push events to 'services/service-alpha/**'
+on:
+  push:
+    paths:
+      #- 'services/service-alpha/**'
+
+jobs:
+  call_reusable_workflow_for_alpha:
+    # TODO: This job should call the 'reusable-build-test.yml' workflow.
+    # Refer to it using its local path: ./.github/workflows/reusable-build-test.yml
+    # Pass the required inputs: 'python-version' (e.g., '3.9') and 'app-directory' (e.g., 'services/service-alpha').
+    uses: # ./.github/workflows/reusable-build-test.yml
+    with:
+      # python-version: '3.9'
+      # app-directory: 'services/service-alpha'
+    # TODO (Optional): If you want to pass secrets, you would use the 'secrets: inherit' or map them individually.
+    # For this lab, direct secret passing is not a primary TODO but good to be aware of.
+    # secrets:
+    #   MY_SECRET: ${{ secrets.ALPHA_SPECIFIC_SECRET }}
+
+  report_alpha_test_result:
+    runs-on: ubuntu-latest
+    # TODO: This job should run after 'call_reusable_workflow_for_alpha' and use its output.
+    needs: call_reusable_workflow_for_alpha
+    steps:
+      - name: Display test result from reusable workflow
+        # TODO: Echo the 'test-result' output from the 'call_reusable_workflow_for_alpha' job.
+        run: |
+          echo "Service Alpha - Test Result from Reusable Workflow: ${{ needs.call_reusable_workflow_for_alpha.outputs.test-result }}" 

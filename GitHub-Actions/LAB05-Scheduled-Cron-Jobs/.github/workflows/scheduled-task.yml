@@ -1,0 +1,27 @@
+name: Scheduled Greeting
+
+# TODO: Configure this workflow to run on a schedule.
+# The goal is to have it run at a specific interval (e.g., every hour, or once a day).
+# Hint: Use the 'on.schedule' trigger and a cron expression.
+# Example cron for every 5 minutes: '*/5 * * * *' (Use with caution during testing to avoid too many runs)
+# Example cron for 9 AM UTC every day: '0 9 * * *'
+on:
+  schedule:
+    # Add your cron schedule configuration here
+    # - cron: '' # Enclose your cron string in quotes
+
+  # Optional: Allow manual triggering for easier testing
+  workflow_dispatch:
+
+jobs:
+  greet:
+    # TODO: Specify the operating system for the runner (e.g., ubuntu-latest).
+    runs-on: # ubuntu-latest
+    steps:
+      - name: Print a greeting and the current time
+        # TODO: Write a simple shell script that prints a greeting message
+        # and the current Coordinated Universal Time (UTC).
+        # Hint: Use 'echo' and the 'date -u' command.
+        run: |
+          # Add your echo command for a greeting here
+          # Add your command to print the current UTC date and time here 

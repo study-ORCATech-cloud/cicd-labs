@@ -1,0 +1,4 @@
+# Requirements for Service Beta
+flask==2.0.1
+# Add a unique small package for beta if desired, e.g.:
+# arrow==1.2.0 

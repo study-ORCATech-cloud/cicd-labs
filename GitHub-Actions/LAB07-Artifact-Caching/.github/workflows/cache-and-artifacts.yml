@@ -1,0 +1,83 @@
+name: Cache Dependencies and Manage Artifacts
+
+# TODO: Configure the workflow to run on push events to 'main'
+# and allow manual dispatch (workflow_dispatch).
+on:
+  # Add your trigger configurations here
+
+jobs:
+  build_and_test_with_cache:
+    # TODO: Specify the operating system for the runner.
+    runs-on: # e.g., ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        # TODO: Use the actions/checkout@v3 action.
+        uses: # actions/checkout@v3
+
+      - name: Set up Python
+        # TODO: Use the actions/setup-python@v4 action.
+        # Specify a Python version (e.g., '3.9').
+        uses: # actions/setup-python@v4
+        with:
+          python-version: # '3.9'
+
+      - name: Cache pip dependencies
+        # TODO: Use the actions/cache@v3 action to cache pip dependencies.
+        # Hints:
+        #   path: ~/.cache/pip  (or specific venv path if you create one)
+        #   key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        #   restore-keys: |
+        #     ${{ runner.os }}-pip-
+        uses: # actions/cache@v3
+        with:
+          path: # e.g., ~/.cache/pip
+          key: # e.g., ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          # Optional: Add restore-keys here
+
+      - name: Install dependencies
+        # TODO: Write a script to install dependencies using pip from requirements.txt.
+        # If the cache was hit, this step should be faster.
+        run: |
+          # Example: python -m pip install --upgrade pip
+          #          pip install -r requirements.txt
+
+      - name: List installed packages (for verification)
+        run: pip list
+
+      - name: Create a simple build artifact
+        # TODO: Create a simple text file named 'build-info.txt' in a directory called 'outputs'.
+        # This file should contain some information, e.g., "Build completed on $(date)".
+        run: |
+          mkdir -p outputs
+          echo "Build completed on $(date)" > outputs/build-info.txt
+          echo "Python version used: $(python --version)" >> outputs/build-info.txt
+
+      - name: Upload build artifact
+        # TODO: Use the actions/upload-artifact@v3 action to upload the 'outputs' directory.
+        # Give the artifact a name, e.g., 'my-build-outputs'.
+        uses: # actions/upload-artifact@v3
+        with:
+          name: # e.g., my-build-outputs
+          path: # e.g., outputs/
+
+  # This job depends on the first one and will download the artifact
+  # TODO: Define a new job named 'deploy_or_inspect_artifact' that needs 'build_and_test_with_cache' to complete.
+  # deploy_or_inspect_artifact:
+    # needs: build_and_test_with_cache
+    # runs-on: ubuntu-latest
+    # steps:
+      # - name: Download build artifact
+        # TODO: Use actions/download-artifact@v3 to download the artifact named 'my-build-outputs' (or your chosen name).
+        # Specify a download path, e.g., './downloaded-artifact'
+        # uses: actions/download-artifact@v3
+        # with:
+          # name: my-build-outputs
+          # path: ./downloaded-artifact
+
+      # - name: Inspect downloaded artifact
+        # TODO: Write a script to list the contents of the download directory and print the content of 'build-info.txt'.
+        # run: |
+          # ls -R ./downloaded-artifact
+          # echo "Contents of build-info.txt:"
+          # cat ./downloaded-artifact/build-info.txt 

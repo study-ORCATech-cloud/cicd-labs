@@ -1,0 +1,28 @@
+name: Caller for Service Beta
+
+# TODO: Configure this workflow to trigger on push events to 'services/service-beta/**'
+on:
+  push:
+    paths:
+      #- 'services/service-beta/**'
+
+jobs:
+  call_reusable_workflow_for_beta:
+    # TODO: This job should call the 'reusable-build-test.yml' workflow.
+    # Use the local path: ./.github/workflows/reusable-build-test.yml
+    # Pass 'python-version' (e.g., '3.10') and 'app-directory' (e.g., 'services/service-beta').
+    uses: # ./.github/workflows/reusable-build-test.yml
+    with:
+      # python-version: '3.10' # Using a different version for Beta for demonstration
+      # app-directory: 'services/service-beta'
+    # secrets: inherit # Example if secrets were needed and defined at caller level
+
+  report_beta_test_result:
+    runs-on: ubuntu-latest
+    # TODO: This job should run after 'call_reusable_workflow_for_beta' and use its output.
+    needs: call_reusable_workflow_for_beta
+    steps:
+      - name: Display test result from reusable workflow
+        # TODO: Echo the 'test-result' output from the 'call_reusable_workflow_for_beta' job.
+        run: |
+          echo "Service Beta - Test Result from Reusable Workflow: ${{ needs.call_reusable_workflow_for_beta.outputs.test-result }}" 

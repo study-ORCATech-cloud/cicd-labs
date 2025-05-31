@@ -1,0 +1,44 @@
+name: Python CI
+
+# TODO: Configure the workflow to run on push events to the 'main' branch
+# AND on pull requests targeting the 'main' branch.
+# Hint: You can list multiple events under 'on'.
+on:
+  # Add your trigger configuration here
+
+jobs:
+  test:
+    # TODO: Specify the operating system for the runner.
+    # Hint: 'ubuntu-latest' is a common choice.
+    runs-on: # Add your runner OS here
+    strategy:
+      # TODO: Define a matrix strategy to test with Python versions 3.8, 3.9, and 3.10.
+      # Hint: Use 'matrix:' and 'python-version:'.
+      matrix:
+        # Add your Python versions here
+
+    steps:
+      - name: Checkout code
+        # TODO: Use the 'actions/checkout@v3' action to checkout your repository's code.
+        # Hint: Use the 'uses:' keyword.
+        uses: # Add checkout action here
+
+      - name: Set up Python ${{ matrix.python-version }}
+        # TODO: Use the 'actions/setup-python@v4' action to set up the Python version from the matrix.
+        # Hint: Use 'uses:' and 'with:' to specify the action and its parameters.
+        uses: # Add setup-python action here
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        # TODO: Write a script to:
+        # 1. Upgrade pip.
+        # 2. Install dependencies from requirements.txt.
+        # Hint: Use 'run:' for multi-line scripts and 'pip install'.
+        run: |
+          # Add your commands here
+
+      - name: Run tests
+        # TODO: Write a command to run pytest.
+        # Hint: The command is simply 'pytest'.
+        run: # Add your pytest command here 

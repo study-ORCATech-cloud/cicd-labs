@@ -1,0 +1,66 @@
+name: Reusable Build and Test
+
+# TODO: Define this workflow to be callable by other workflows.
+# It should accept 'inputs' for 'python-version' (string, required) and 'app-directory' (string, required).
+# It should also define an 'output' named 'test-result' (string).
+on:
+  workflow_call:
+    inputs:
+      # python-version:
+      #   description: 'Python version to use'
+      #   required: true
+      #   type: string
+      # app-directory:
+      #   description: 'Directory of the application to build and test'
+      #   required: true
+      #   type: string
+    outputs:
+      # test-result:
+      #   description: 'The result of the test execution'
+      #   value: ${{ jobs.build_and_test.outputs.test_outcome }}
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    # TODO: Define an output for this job named 'test_outcome'
+    # outputs:
+      # test_outcome: ${{ steps.run_tests.outputs.outcome }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        # TODO: Use actions/setup-python@v4. The Python version should come from the workflow input.
+        uses: # actions/setup-python@v4
+        with:
+          python-version: # ${{ inputs.python-version }}
+
+      - name: Install dependencies
+        # TODO: Install dependencies from requirements.txt located in the 'app-directory' input.
+        # Hint: Use './${{ inputs.app-directory }}/requirements.txt' for the path.
+        run: |
+          echo "Installing dependencies from ${{ inputs.app-directory }}/requirements.txt"
+          # python -m pip install --upgrade pip
+          # pip install -r ./${{ inputs.app-directory }}/requirements.txt
+
+      - name: Run application tests (placeholder)
+        id: run_tests # Give an ID to this step to access its output
+        # TODO: Run the app.py from the 'app-directory' input.
+        # Set an environment variable PYTHON_VERSION_INFO to be used by the app.
+        # For this lab, we'll simulate a test result. Set an output for this step named 'outcome'.
+        # If inputs.app-directory contains 'alpha', set outcome to "Alpha tests passed!", otherwise "Beta tests passed!"
+        run: |
+          echo "Running tests for application in ${{ inputs.app-directory }}..."
+          # cd ./${{ inputs.app-directory }}
+          # export PYTHON_VERSION_INFO="${{ inputs.python-version }}"
+          # python app.py
+          # # Simulate test outcome based on app-directory for demonstration
+          # if [[ "${{ inputs.app-directory }}" == *"alpha"* ]]; then
+          #   echo "::set-output name=outcome::Alpha tests passed!"
+          # else
+          #   echo "::set-output name=outcome::Beta tests passed!"
+          # fi
+
+      - name: Print test outcome from step output
+        run: |
+          echo "Test outcome from step: ${{ steps.run_tests.outputs.outcome }}" 

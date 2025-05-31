@@ -1,0 +1,27 @@
+name: Hello World CI
+
+# TODO: Configure the workflow to run on a push event to the 'main' branch.
+# Hint: Use the 'on', 'push', and 'branches' keywords.
+on:
+  # Add your trigger configuration here
+
+jobs:
+  say-hello:
+    # TODO: Specify the operating system for the runner.
+    # Hint: Common options are 'ubuntu-latest', 'windows-latest', 'macos-latest'.
+    runs-on: # Add your runner OS here
+    steps:
+      - name: Echo greeting
+        # TODO: Write a command to print a greeting message.
+        # Example: echo "Hello Student!"
+        run: # Add your echo command here
+
+      - name: Show date and runner OS
+        # TODO: Write a multi-line script that:
+        # 1. Prints the current date.
+        # 2. Prints the operating system of the runner using a GitHub Actions context variable.
+        # Hint: For date, you can use the 'date' command.
+        # Hint: For runner OS, use the ${{ runner.os }} context variable.
+        run: |
+          # Add your command to print the date here
+          # Add your command to print the runner OS here 

@@ -1,0 +1,41 @@
+name: Deploy Static Site to GitHub Pages
+
+# TODO: Configure the workflow to run on push events to the 'main' branch.
+on:
+  # push:
+  #   branches: ['main']
+
+# TODO: Set up the necessary permissions for GitHub Pages deployment.
+# Hint: You need 'contents: read', 'pages: write', and 'id-token: write'.
+permissions:
+  # contents: read
+  # pages: write
+  # id-token: write
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    # TODO: Specify the operating system for the runner (e.g., ubuntu-latest).
+    runs-on: # ubuntu-latest
+    steps:
+      - name: Checkout repository
+        # TODO: Use the actions/checkout@v3 action to checkout your repository's code.
+        uses: # actions/checkout@v3
+
+      - name: Setup Pages
+        # TODO: Use the actions/configure-pages@v3 action to configure GitHub Pages.
+        uses: # actions/configure-pages@v3
+
+      - name: Upload artifact
+        # TODO: Use the actions/upload-pages-artifact@v2 action to upload your static site files.
+        # Hint: Specify the 'path' to your site directory (e.g., './site').
+        uses: # actions/upload-pages-artifact@v2
+        with:
+          path: # './site'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        # TODO: Use the actions/deploy-pages@v2 action to deploy the artifact to GitHub Pages.
+        uses: # actions/deploy-pages@v2

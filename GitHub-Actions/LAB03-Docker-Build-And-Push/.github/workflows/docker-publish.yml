@@ -1,0 +1,34 @@
+name: Docker Build and Push
+
+# TODO: Configure the workflow to run on push events to the 'main' branch.
+on:
+  # Add your trigger configuration here
+
+jobs:
+  build-and-push:
+    # TODO: Specify the operating system for the runner (e.g., ubuntu-latest).
+    runs-on: # Add your runner OS here
+
+    steps:
+      - name: Checkout repository
+        # TODO: Use the actions/checkout@v3 action to checkout your repository's code.
+        uses: # Add checkout action here
+
+      - name: Log in to Docker Hub
+        # TODO: Use the docker/login-action@v3 to log in to Docker Hub.
+        # Hint: You will need to use 'secrets.DOCKER_USERNAME' and 'secrets.DOCKER_PASSWORD'.
+        uses: # Add Docker login action here
+        with:
+          # Add username using secrets
+          # Add password using secrets
+
+      - name: Build and push Docker image
+        # TODO: Use the docker/build-push-action@v5 to build and push the image.
+        # Hint: Set 'context: .', 'push: true'.
+        # For 'tags', use a format like: ${{ secrets.DOCKER_USERNAME }}/my-app:${{ github.sha }}
+        # Alternatively, you can use a static tag like: ${{ secrets.DOCKER_USERNAME }}/my-app:latest
+        uses: # Add Docker build-push action here
+        with:
+          # Specify the build context (e.g., current directory)
+          # Enable pushing the image
+          # Specify tags for the image (e.g., your-dockerhub-username/app-name:latest, your-dockerhub-username/app-name:${{ github.sha }}) 

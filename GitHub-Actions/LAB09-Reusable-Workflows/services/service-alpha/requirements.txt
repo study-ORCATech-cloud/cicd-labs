@@ -1,0 +1,4 @@
+# Requirements for Service Alpha
+requests==2.25.1
+# Add a unique small package for alpha if desired, e.g.:
+# pendulum==2.1.2 
