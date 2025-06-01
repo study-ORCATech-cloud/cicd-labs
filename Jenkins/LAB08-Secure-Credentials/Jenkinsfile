@@ -1,0 +1,71 @@
+pipeline {
+    agent any
+
+    // TODO_ENV_CREDENTIAL:
+    // 1. In Jenkins, create a "Secret text" credential.
+    //    - Go to Manage Jenkins -> Credentials -> System -> Global credentials.
+    //    - Click "Add Credentials".
+    //    - Kind: Secret text
+    //    - Scope: Global
+    //    - Secret: Enter any dummy secret, e.g., "my-super-secret-api-key"
+    //    - ID: `lab08-api-key`
+    //    - Description: "API Key for Lab 08"
+    // 2. Use the `credentials()` helper in the `environment` block below to bind this
+    //    Jenkins credential (ID: `lab08-api-key`) to an environment variable named `MY_API_KEY`.
+    environment {
+        // Example: MY_API_KEY = credentials('your-credential-id-here')
+    }
+
+    stages {
+        stage('Access Secret Text Credential') {
+            steps {
+                echo "Attempting to use the API Key from environment variable..."
+                // TODO_ECHO_ENV_CREDENTIAL:
+                // Echo the value of the MY_API_KEY environment variable.
+                // Jenkins should automatically mask the secret in the console output.
+                // Example: sh 'echo "My API Key is: $MY_API_KEY"'
+
+                echo "If the above line showed '********' or similar, the credential was masked!"
+            }
+        }
+
+        stage('Access Username/Password Credential') {
+            steps {
+                // TODO_WITH_CREDENTIALS:
+                // 1. In Jenkins, create a "Username with password" credential.
+                //    - Kind: Username with password
+                //    - Scope: Global
+                //    - Username: `lab_user`
+                //    - Password: `lab_password123`
+                //    - ID: `lab08-user-pass`
+                //    - Description: "User/Pass for Lab 08"
+                // 2. Use the `withCredentials` step to access this Jenkins credential (ID: `lab08-user-pass`).
+                //    This step makes the username and password available as variables within its block.
+                //    - The username variable will be `USERPASS_USR`.
+                //    - The password variable will be `USERPASS_PSW`.
+                // Example:
+                // withCredentials([usernamePassword(credentialsId: 'your-credential-id', usernameVariable: 'USER_VAR', passwordVariable: 'PASS_VAR')]) {
+                //     // Access $USER_VAR and $PASS_VAR here
+                // }
+
+                script {
+                    // TODO_ECHO_USERPASS_CREDENTIALS:
+                    // Inside the withCredentials block (which you need to add above this script block or wrap this script block with),
+                    // echo the values of the username and password variables you defined (e.g., USERPASS_USR and USERPASS_PSW).
+                    // Again, Jenkins should mask the password.
+                    // Example:
+                    // echo "Username: $USERPASS_USR"
+                    // echo "Password: $USERPASS_PSW" // This should be masked
+                }
+                echo "If the password above was masked, the withCredentials step is working correctly!"
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline for Lab 08 (Secure Credentials) finished.'
+            cleanWs()
+        }
+    }
+} 

@@ -1,0 +1,39 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Simulate Build') {
+            steps {
+                echo 'Simulating a build step...'
+                // TODO_OPTIONAL_FAILURE: For testing failure notifications,
+                // you can uncomment the line below to force a failure.
+                // error 'Simulating a build failure!'
+                echo 'Build simulation completed.'
+            }
+        }
+    }
+
+    post {
+        // TODO_SLACK_NOTIFY_ALWAYS:
+        // Add a slackSend step here that will *always* run.
+        // - Send to your configured default Slack channel (or a specific one).
+        // - Message: "Pipeline '${env.JOB_NAME}' [Build #${env.BUILD_NUMBER}] has completed."
+        // - Consider adding a color (e.g., 'good', 'warning', 'danger' or a hex code like '#439FE0').
+        // Example: slackSend channel: '#your-channel', color: 'good', message: '...'
+
+        // TODO_SLACK_NOTIFY_SUCCESS:
+        // Add a slackSend step here that will run only on SUCCESS.
+        // - Message: "SUCCESS: Pipeline '${env.JOB_NAME}' [Build #${env.BUILD_NUMBER}] completed successfully."
+        // - Color: 'good'
+
+        // TODO_SLACK_NOTIFY_FAILURE:
+        // Add a slackSend step here that will run only on FAILURE.
+        // - Message: "FAILURE: Pipeline '${env.JOB_NAME}' [Build #${env.BUILD_NUMBER}] failed. Check console: ${env.BUILD_URL}"
+        // - Color: 'danger'
+
+        // TODO_SLACK_NOTIFY_UNSTABLE:
+        // Add a slackSend step here that will run only if the build is UNSTABLE.
+        // - Message: "UNSTABLE: Pipeline '${env.JOB_NAME}' [Build #${env.BUILD_NUMBER}] is unstable. ${env.BUILD_URL}"
+        // - Color: 'warning'
+    }
+} 

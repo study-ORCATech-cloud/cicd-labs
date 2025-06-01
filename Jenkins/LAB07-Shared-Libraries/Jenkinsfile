@@ -1,0 +1,53 @@
+// TODO_LOAD_LIBRARY: Add the @Library annotation to load your shared library.
+// The name of the library will be what you configure in Jenkins Global Pipeline Libraries (e.g., 'cicd-lab-library').
+// Use the 'main' branch for this lab: @Library('your-library-name@main') _
+// Ensure the line ends with `_` (underscore space).
+
+pipeline {
+    agent any
+
+    environment {
+        APP_PATH = 'Jenkins/LAB07-Shared-Libraries/app'
+    }
+
+    stages {
+        stage('Checkout SCM') {
+            steps {
+                echo 'Checking out code...'
+                checkout scm // This checks out the main repo, including the Jenkinsfile and the example-shared-library directory
+            }
+        }
+
+        stage('Setup & Test with Shared Library') {
+            steps {
+                // TODO_CALL_PRINT_MESSAGE: Call the `printMessage` function from your shared library.
+                // Pass a custom string message to it.
+                // Example: customSteps.printMessage("Starting Lab 07 build process...")
+                // If your vars script is named `customSteps.groovy`, the functions are available on a variable of the same name.
+
+                // TODO_CALL_INSTALL_DEPS: Call the `installPythonDependencies` function from your shared library.
+                // Pass the APP_PATH to it using a map: customSteps.installPythonDependencies(appPath: env.APP_PATH)
+
+                // TODO_CALL_RUN_PY_TESTS: Call the `runPyTests` function from your shared library.
+                // Pass the APP_PATH to it: customSteps.runPyTests(appPath: env.APP_PATH)
+
+                echo "Shared library functions execution finished."
+            }
+        }
+
+        stage('Run Main Python Script (Directly)') {
+            // This stage is to show that regular pipeline steps can still be used alongside the shared library.
+            steps {
+                echo 'Running the main Python script directly from Jenkinsfile...'
+                sh "python ${APP_PATH}/main.py"
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline for Lab 07 (Shared Libraries) finished.'
+            cleanWs()
+        }
+    }
+} 

@@ -1,0 +1,2 @@
+This is a sample artifact for Lab 10 (SSH Remote Deploy).
+Deployed by Jenkins! 

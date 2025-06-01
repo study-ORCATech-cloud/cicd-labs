@@ -1,0 +1,78 @@
+pipeline {
+    agent any
+
+    environment {
+        // TODO_ENV_VARS: Define these environment variables.
+        // Replace the placeholder values with your actual remote server details.
+        REMOTE_USER = 'your-remote-ssh-user' // e.g., ec2-user, ubuntu, jenkins-agent
+        REMOTE_HOST = 'your-remote-server-ip-or-hostname' // e.g., 192.168.1.100 or myserver.example.com
+        REMOTE_BASE_PATH = '/tmp/jenkins-deployments' // Base directory on remote server for deployments
+        ARTIFACT_PATH = 'Jenkins/LAB10-SSH-Remote-Deploy/app/artifact.txt' // Path to the artifact in the Jenkins workspace
+    }
+
+    stages {
+        stage('Prepare Deployment Directory on Remote') {
+            steps {
+                // TODO_SSH_AGENT_WRAPPER_PREPARE:
+                // 1. In Jenkins, create an "SSH Username with private key" credential.
+                //    - Kind: SSH Username with private key
+                //    - Scope: Global
+                //    - ID: `lab10-remote-ssh-key` (or your chosen ID)
+                //    - Description: "SSH key for Lab 10 remote server"
+                //    - Username: The same username as defined in REMOTE_USER env var.
+                //    - Private Key: Choose "Enter directly" and paste your SSH private key.
+                // 2. Wrap the `sh` step below with the `sshagent` step, using the credential ID created above.
+                // Example: sshagent(['your-credential-id']) { /* commands */ }
+
+                // TODO_MKDIR_COMMAND:
+                // Use an `sh` command to connect via SSH and create a unique deployment directory on the remote server.
+                // The directory should be: ${REMOTE_BASE_PATH}/${env.JOB_NAME}/${env.BUILD_NUMBER}
+                // Use `mkdir -p` to create parent directories if they don't exist.
+                // Example: sh "ssh ${REMOTE_USER}@${REMOTE_HOST} 'mkdir -p /some/path/'"
+                echo "Preparation of remote directory (if successful) will be shown in SSH command output."
+            }
+        }
+
+        stage('Deploy Artifact via SCP') {
+            steps {
+                // TODO_SSH_AGENT_WRAPPER_DEPLOY:
+                // Wrap the `sh` step below with the `sshagent` step, using the same credential ID as before.
+
+                // TODO_SCP_COMMAND:
+                // Use an `sh` command to copy the ARTIFACT_PATH from the Jenkins workspace
+                // to the remote deployment directory: ${REMOTE_BASE_PATH}/${env.JOB_NAME}/${env.BUILD_NUMBER}/artifact.txt
+                // Example: sh "scp mylocalfile.txt ${REMOTE_USER}@${REMOTE_HOST}:/remote/path/remotefile.txt"
+                echo "SCP command execution (if successful) will be shown in its output."
+            }
+        }
+
+        stage('Verify Deployment on Remote') {
+            steps {
+                // TODO_SSH_AGENT_WRAPPER_VERIFY:
+                // Wrap the `sh` steps below with the `sshagent` step, using the same credential ID.
+
+                // TODO_LS_COMMAND:
+                // Use an `sh` command to connect via SSH and list the contents of the remote deployment directory.
+                // This is to verify that `artifact.txt` was copied.
+                // Example: sh "ssh ${REMOTE_USER}@${REMOTE_HOST} 'ls -la /remote/path/'"
+
+                // TODO_CAT_COMMAND (Optional):
+                // Optionally, add another `sh` command to `cat` the contents of the deployed `artifact.txt` from the remote server.
+                // Example: sh "ssh ${REMOTE_USER}@${REMOTE_HOST} 'cat /remote/path/artifact.txt'"
+                echo "Verification commands (if successful) will show remote file listing and content."
+            }
+        }
+    }
+
+    post {
+        always {
+            echo "Pipeline for Lab 10 (SSH Remote Deploy) finished."
+            // TODO_CLEANUP_REMOTE (Optional but Recommended for Lab purposes):
+            // Consider adding a cleanup step here, wrapped in sshagent,
+            // to remove the created directory on the remote server to keep it clean for next runs.
+            // Example: sh "ssh ${REMOTE_USER}@${REMOTE_HOST} 'rm -rf ${REMOTE_BASE_PATH}/${env.JOB_NAME}/${env.BUILD_NUMBER}'"
+            // Note: Be very careful with `rm -rf` commands!
+            cleanWs() // Cleans the Jenkins workspace
+        }
+    }
+} 
