@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rollback-demo-app
+  labels:
+    app: rollback-demo
+    version: v2
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: rollback-demo
+  template:
+    metadata:
+      labels:
+        app: rollback-demo
+        version: v2
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.21
+        ports:
+        - containerPort: 80
+        env:
+        - name: APP_VERSION
+          value: "v2.0.0"
+        - name: APP_MESSAGE
+          value: "Version 2 - PROBLEMATIC: High resource usage causing issues!"
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1"
+          limits:
+            memory: "4Gi"
+            cpu: "2"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rollback-demo-service
+  labels:
+    app: rollback-demo
+spec:
+  type: NodePort
+  selector:
+    app: rollback-demo
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30090 

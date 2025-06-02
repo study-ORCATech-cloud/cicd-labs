@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: webapp-config
+  namespace: webapp-staging
+  labels:
+    app: webapp
+    environment: staging
+data:
+  environment: "staging"
+  log_level: "debug"
+  max_connections: "100"
+  database_url: "staging-db.example.com"
+  cache_ttl: "300"
+  feature_flags: "feature_a=true,feature_b=true,feature_c=false" 

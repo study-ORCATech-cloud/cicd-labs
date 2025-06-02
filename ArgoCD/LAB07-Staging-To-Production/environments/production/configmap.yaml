@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: webapp-config
+  namespace: webapp-production
+  labels:
+    app: webapp
+    environment: production
+data:
+  environment: "production"
+  log_level: "info"
+  max_connections: "500"
+  database_url: "prod-db.example.com"
+  cache_ttl: "3600"
+  feature_flags: "feature_a=true,feature_b=false,feature_c=false" 

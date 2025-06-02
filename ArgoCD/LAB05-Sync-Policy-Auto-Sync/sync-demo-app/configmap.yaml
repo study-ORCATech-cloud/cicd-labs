@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sync-demo-config
+  labels:
+    app: sync-demo
+data:
+  app.mode: "development"
+  sync.policy: "manual"
+  environment: "lab05-demo"
+  message: "Welcome to Sync Policy Demo - Manual Mode" 

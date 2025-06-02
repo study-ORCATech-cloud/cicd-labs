@@ -2,24 +2,13 @@ apiVersion: v1
 kind: Service
 metadata:
   name: my-custom-app-service
-  # Labels for the service itself are optional.
-  # labels:
-    # app: my-custom-app
+  labels:
+    app: my-custom-app
 spec:
-  # Initial service type is NodePort, suitable for Minikube.
-  # The lab instructions in README.md will discuss this.
   type: NodePort 
   selector:
-    # This selector must match the labels of the Pods (from deployment.yaml).
     app: my-custom-app
   ports:
     - protocol: TCP
-      # Port the service will expose on.
       port: 80
-      # Port on the Pod/container the service will forward traffic to.
-      # This must match the containerPort in your deployment.yaml (e.g., 5000).
       targetPort: 5000
-      # If type is NodePort, a port in the range 30000-32767 will be automatically assigned 
-      # unless you specify one. For this lab, we'll use an auto-assigned port initially.
-      # The lab instructions will guide you on how to find and use it.
-      # nodePort: 30007 # Example: can be specified or left to auto-assign 

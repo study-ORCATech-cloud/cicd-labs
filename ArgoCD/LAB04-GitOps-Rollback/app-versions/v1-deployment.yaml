@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rollback-demo-app
+  labels:
+    app: rollback-demo
+    version: v1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: rollback-demo
+  template:
+    metadata:
+      labels:
+        app: rollback-demo
+        version: v1
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.20
+        ports:
+        - containerPort: 80
+        env:
+        - name: APP_VERSION
+          value: "v1.0.0"
+        - name: APP_MESSAGE
+          value: "Welcome to Version 1 - Stable Release"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rollback-demo-service
+  labels:
+    app: rollback-demo
+spec:
+  type: NodePort
+  selector:
+    app: rollback-demo
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30090 

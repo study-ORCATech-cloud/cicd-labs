@@ -33,13 +33,12 @@ By the end of this lab, you will:
 
 ## 📂 Folder Structure for This Lab
 
-This lab primarily involves interacting with the Argo CD UI and `kubectl`. The application manifests are pulled directly from a public Git repository.
+This lab primarily involves interacting with the Argo CD UI and `kubectl`. The application manifests are pulled directly from a public Git repository, so no additional files are required for this lab.
 
 ```bash
 ArgoCD/LAB01-Deploy-First-Application/
 ├── README.md         # Lab overview, objectives, prerequisites etc. (this file)
-├── LAB.md            # Detailed step-by-step lab instructions
-└── solutions.md      # Recap of steps and expected outcomes
+└── LAB.md            # Detailed step-by-step lab instructions
 ```
 
 ---
@@ -61,7 +60,7 @@ In summary:
 
 ---
 
-## ✨ Key Concepts (A Brief Overview)
+## ✨ Key Concepts
 
 -   **Kubernetes (`k8s`):** An open-source system for automating deployment, scaling, and management of containerized applications.
 -   **Minikube:** A tool to run a single-node Kubernetes cluster locally for development and testing.

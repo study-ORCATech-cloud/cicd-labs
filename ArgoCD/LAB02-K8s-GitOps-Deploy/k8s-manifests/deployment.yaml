@@ -2,32 +2,21 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: my-custom-app-deployment
-  # TODO: Add a label for your app (e.g., app: my-custom-app)
   labels:
-    app: my-custom-app # YOUR_APP_LABEL_KEY: YOUR_APP_LABEL_VALUE
+    app: my-custom-app
 spec:
-  # Initial replicaCount is 1.
-  # The lab instructions in README.md will guide you to change this.
-  replicas: 1 # YOUR_REPLICA_COUNT
+  replicas: 1
   selector:
     matchLabels:
-      # TODO: Must match the labels defined in spec.template.metadata.labels
-      app: my-custom-app # YOUR_APP_LABEL_KEY: YOUR_APP_LABEL_VALUE
+      app: my-custom-app
   template:
     metadata:
       labels:
-        # TODO: Define labels for your Pods (e.g., app: my-custom-app)
-        app: my-custom-app # YOUR_APP_LABEL_KEY: YOUR_APP_LABEL_VALUE
+        app: my-custom-app
     spec:
       containers:
-      # TODO: Choose a name for your container (e.g., my-custom-app-container)
-      - name: my-custom-app-container # YOUR_CONTAINER_NAME
-        # The image name below is a placeholder.
-        # The lab instructions in README.md will guide you to set this to your actual image name.
-        image: your-dockerhub-username/my-custom-app:v1 # YOUR_DOCKER_IMAGE
-        # Initial imagePullPolicy is IfNotPresent.
-        # The lab instructions in README.md will guide you on choosing an appropriate policy.
-        imagePullPolicy: IfNotPresent # YOUR_IMAGE_PULL_POLICY 
+      - name: my-custom-app-container
+        image: your-dockerhub-username/my-custom-app:v1
+        imagePullPolicy: IfNotPresent
         ports:
-        # TODO: The port your application container listens on (e.g., 5000)
-        - containerPort: 5000 # YOUR_CONTAINER_PORT 
+        - containerPort: 5000 
