@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    image: docker-cd-lab06-web
+    ports:
+      - "5007:5000" # Using host port 5007 for this lab
+    environment:
+      - FLASK_ENV=development # For easier debugging during the lab
+      - REDIS_HOST=redis
+      # For this lab, we'll simplify and not use the API key secret or file counter from Lab 05
+      # to keep the focus purely on health checks. Students can add them back if they wish.
+    depends_on:
+      redis: # Explicitly define service dependency with condition
+        condition: service_healthy # Web service will wait for Redis to be healthy
+    
+    # TODO_WEB_HEALTHCHECK: Define a health check for the web service.
+    # The application (app/main.py) has a /health endpoint.
+    # The health check should:
+    # 1. Use a command to check if the /health endpoint is reachable and returns a success status.
+    #    A common way is to use a tool like `curl` to make an HTTP request to the health endpoint (e.g., `http://localhost:5000/health`).
+    #    Ensure your command exits with a non-zero status code on failure.
+    #    Note: The necessary tool (e.g., `curl`) needs to be available in the web container (see TODO in app/Dockerfile).
+    # 2. Set an appropriate `interval` (e.g., 10s or 15s).
+    # 3. Set a `timeout` (e.g., 5s).
+    # 4. Set `retries` (e.g., 3).
+    # 5. Optionally, set a `start_period` (e.g., 30s) to give the app time to start before failing health checks.
+    # Example structure:
+    # healthcheck:
+    #   test: ["CMD", "your_command_to_check_health", "arg1", "arg2"]
+    #   interval: 15s
+    #   timeout: 5s
+    #   retries: 3
+    #   start_period: 30s
+
+  redis:
+    image: "redis:6-alpine"
+    ports:
+      - "6385:6379" # Using host port 6385 for this lab's Redis
+    # No volume for Redis in this lab to keep focus on health checks.
+
+    # TODO_REDIS_HEALTHCHECK: Define a health check for the Redis service.
+    # The health check should:
+    # 1. Use a command appropriate for checking Redis health (e.g., a client tool that can ping the server).
+    #    Ensure the command exits with a non-zero status on failure.
+    # 2. Set an `interval` (e.g., 10s).
+    # 3. Set a `timeout` (e.g., 3s).
+    # 4. Set `retries` (e.g., 3).
+    # Example structure (similar to web, but different test command):
+    # healthcheck:
+    #   test: ["CMD", "your_redis_check_command", "arg_for_redis_check"]
+    #   interval: 10s
+    #   timeout: 3s
+    #   retries: 3
+
+# No top-level volumes or secrets needed for this specific lab's focus. 

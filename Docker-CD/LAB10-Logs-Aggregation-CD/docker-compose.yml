@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  service1:
+    build: ./service1
+    ports:
+      - "5050:5000" # Host:Container port mapping for service1
+    # TODO_SERVICE1_LOGGING: Configure the logging driver for service1.
+    # Common choices include 'json-file' (default, with options for rotation),
+    # 'local' (optimized for local storage), or others like 'syslog', 'journald'.
+    # For this lab, we will focus on 'json-file' to explore its rotation options.
+    # Example for json-file:
+    # logging:
+    #   driver: "json-file"  # Specify the json-file driver
+    #   options:
+    #     max-size: "YOUR_LOG_FILE_MAX_SIZE_WITH_UNIT"  # e.g., "100k", "10m", "1g" (kilobytes, megabytes, gigabytes)
+    #     max-file: "YOUR_MAX_NUMBER_OF_LOG_FILES" # e.g., "3" (an integer representing the number of files)
+    #     # Other options like 'labels' or 'env' can be added for tagging logs.
+
+  service2:
+    build: ./service2
+    ports:
+      - "5051:5001" # Host:Container port mapping for service2
+    # TODO_SERVICE2_LOGGING: Configure the logging driver for service2.
+    # Aim for a similar configuration as service1, using the 'json-file' driver
+    # with appropriate rotation options (max-size, max-file).
+    # This will allow you to observe log rotation and management for multiple services.
+    # Example for json-file:
+    # logging:
+    #   driver: "json-file"
+    #   options:
+    #     max-size: "YOUR_LOG_FILE_MAX_SIZE_WITH_UNIT" # e.g., "50k", "5m"
+    #     max-file: "YOUR_MAX_NUMBER_OF_LOG_FILES"# e.g., "2"
+
+# After configuring logging, you can view aggregated logs using:
+#   docker-compose logs -f
+# Or follow logs for a specific service:
+#   docker-compose logs -f service1 

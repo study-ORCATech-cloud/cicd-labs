@@ -1,0 +1,39 @@
+version: '3.8' # Specify Docker Compose file format version
+
+services:
+  # TODO_WEB_SERVICE: Define the 'web' service for the Python Flask application.
+  # - build: Specify the build context for the web app (the ./app directory where its Dockerfile is).
+  #   Example structure: build: ./path/to/your/app  OR  build: context: ./path/to/your/app dockerfile: YourDockerfile
+  # - ports: Map port 5000 on the host to port 5000 on the container (where Flask runs).
+  #   Example structure: ports: - "<host_machine_port>:<container_port>"
+  # - volumes: (Optional for now, will be covered in later labs, but good to know)
+  #   Mount the ./app directory on the host to /usr/src/app in the container for live code reloading during development.
+  #   Example structure: volumes: - ./path/to/your/app_on_host:/path_in_container
+  # - environment: Pass environment variables to the web service.
+  #   For this app, REDIS_HOST should be the name of the Redis service (e.g., 'redis').
+  #   Example structure: environment: - REDIS_HOST_VAR_NAME=actual_redis_service_name
+  # - depends_on: Make the web service depend on the redis service to control startup order.
+  #   Example structure: depends_on: - actual_redis_service_name
+  web:
+    # ... add web service configuration here
+
+  # TODO_REDIS_SERVICE: Define the 'redis' service for the Redis cache.
+  # - image: Use an official Redis image from Docker Hub (e.g., 'redis:alpine' for a small image).
+  #   Example structure: image: redis:<version_tag>
+  # - ports: (Optional for this lab if only accessed by 'web' service, but good for debugging)
+  #   Map port 6379 on the host to port 6379 on the container if you want to access Redis directly from your host.
+  #   Example structure: ports: - "<host_redis_port>:<container_redis_port>"
+  # - volumes: (Optional, for persistence if needed - not critical for this lab's hit counter)
+  #   To persist Redis data across container restarts, you can define a named volume.
+  #   Example structure (define volume at top level too):
+  #     volumes: - your_named_volume_for_redis:/data_directory_in_redis_container
+  # volumes:
+  #   your_named_volume_for_redis: (this would be at the root of the docker-compose.yml)
+  redis:
+    # ... add redis service configuration here
+
+# TODO_VOLUMES_DEFINITION (Optional, only if you added a named volume for Redis persistence):
+# If you defined a named volume for Redis (e.g., redis_data), declare it here.
+# Example structure:
+# volumes:
+#   your_named_volume_for_redis: 

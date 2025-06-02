@@ -1,0 +1,26 @@
+version: '3.8'
+
+# This docker-compose.yml is for running the application using the DEVELOPMENT Dockerfile (app/Dockerfile)
+# It includes a volume mount for live reloading, similar to Lab03, for direct comparison.
+
+services:
+  web_dev:
+    build:
+      context: ./app # Build context is the app directory where the dev Dockerfile is
+      dockerfile: Dockerfile # Explicitly specifies the dev Dockerfile
+    image: docker-cd-lab04-web-dev # Naming the image for easier identification
+    ports:
+      - "5004:5000" # Using host port 5004 for the dev version
+    volumes:
+      - ./app:/usr/src/app # Volume mount for live code reloading
+    environment:
+      - FLASK_ENV=development # Enable Flask dev mode and reloader
+      - REDIS_HOST=redis_dev
+    depends_on:
+      - redis_dev
+    command: python -u main.py # Standard Flask dev server start
+
+  redis_dev:
+    image: "redis:6-alpine"
+    ports:
+      - "6382:6379" # Using host port 6382 for this redis instance 

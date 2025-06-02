@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # TODO_API_SERVICE_DEFINITION: Define the 'api_service'.
+  # - build: Context should be './api_service'
+  # - image: Give it a name like 'docker-cd-lab07-api-service'
+  # - ports: Map a host port (e.g., 5010) to container port 5000 (or what FLASK_RUN_PORT is set to in its Dockerfile/env).
+  # - environment: (Optional) Could set FLASK_ENV=development or specific SERVICE_ID.
+  # - healthcheck: (Recommended, from Lab 06) Define a healthcheck using its /health endpoint.
+  api_service:
+    # ... your api_service definition here
+
+  # TODO_WEB_FRONTEND_SERVICE_DEFINITION: Define the 'web_frontend_service'.
+  # - build: Context should be './web_frontend_service'
+  # - image: Give it a name like 'docker-cd-lab07-web-frontend'
+  # - ports: Map a host port (e.g., 5011) to container port 5001 (or what FLASK_RUN_PORT is set to).
+  # - environment:
+  #   - API_SERVICE_URL=http://api_service:5000 (or the port api_service listens on internally)
+  #   - FLASK_ENV=development (Optional)
+  # - depends_on:
+  #   api_service: # Make it depend on api_service
+  #     condition: service_healthy # (If you implemented healthchecks)
+  # - healthcheck: (Recommended, from Lab 06) Define a healthcheck using its /health endpoint.
+  web_frontend_service:
+    # ... your web_frontend_service definition here
+
+  # --- CI Simulation: Test Runner Services ---
+  # The idea here is to define services that, when run, execute the tests for each microservice.
+
+  # TODO_API_SERVICE_TEST_RUNNER: Define a service to run api_service tests.
+  # This service will use the same build context as api_service.
+  # - build: Context should be './api_service'
+  # - image: Optional, can be named e.g., 'docker-cd-lab07-api-service-tester' or use the api_service image if tests are included.
+  # - command: Override the default CMD to run pytest. Example structure: ["your_test_command", "--verbose_flag_if_any", "./path/to/your/tests"]
+  #   Ensure that the WORKDIR in the Dockerfile allows `tests/` to be found directly or adjust path.
+  # - environment: (Optional) Could set environment variables specific to testing if any.
+  # You will run this with `docker-compose run --rm api_service_runner` (or your chosen service name).
+  # api_service_runner: # Choose a name for this test runner service
+    # ... your api_service test runner definition here
+
+  # TODO_WEB_FRONTEND_SERVICE_TEST_RUNNER: Define a service to run web_frontend_service tests.
+  # Similar to the api_service_runner, but for the web_frontend_service.
+  # - build: Context should be './web_frontend_service'
+  # - image: Optional, e.g., 'docker-cd-lab07-web-frontend-tester'
+  # - command: Override to run pytest for web_frontend_service. Example structure: ["your_test_command", "--verbose_flag_if_any", "./path/to/your/tests"]
+  # - environment: (Optional) If tests need specific environment variables like a MOCK_API_URL.
+  # web_frontend_service_runner: # Choose a name for this test runner service
+    # ... your web_frontend_service test runner definition here
+
+# TODO_VOLUMES_GLOBAL (Optional): If you decide to use any named volumes (e.g., for future extensions like database persistence), define them here.
+# For this lab, focusing on CI simulation with service builds and test runs, explicit volumes might not be critical unless your tests write persistent data.
+# volumes:
+#   my_volume_name: 

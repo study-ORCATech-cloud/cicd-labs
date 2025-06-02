@@ -1,0 +1,91 @@
+version: '3.8'
+
+# This Docker Compose file is intended for deployment to AWS ECS.
+# Students will need to:
+# 1. Build and push their service images to AWS ECR.
+# 2. Replace the placeholder image URIs below with their actual ECR image URIs.
+# 3. Configure an AWS Docker context (e.g., `docker context create ecs myecscontext`).
+# 4. Deploy using `docker context use myecscontext && docker compose up`.
+
+# TODO_AWS_GLOBAL_CONFIG (Optional): Define top-level x-aws- extensions if needed for the entire stack,
+# for example, a default VPC or IAM role. For this lab, we'll focus on per-service configs.
+# x-aws-vpc: "vpc-xxxxxxxxxxxxxxxxx" # Example: if you want to deploy to a specific VPC
+
+services:
+  api_service:
+    # TODO_API_IMAGE: Replace with your ECR image URI for the api_service.
+    # Example: image: 123456789012.dkr.ecr.us-east-1.amazonaws.com/lab08-api-service:latest
+    image: YOUR_ECR_ACCOUNT_ID.dkr.ecr.YOUR_AWS_REGION.amazonaws.com/your-api-service-ecr-repo:latest
+    ports:
+      - "5000:5000" # For ECS, this defines the container port. Actual host port mapping is handled by ECS/Load Balancer.
+    environment:
+      - FLASK_ENV=production # Ensure production mode
+      - SERVICE_ID=ecs_api_instance
+      # FLASK_RUN_PORT is set to 5000 by default in the Dockerfile for api_service
+    # TODO_API_LOGGING (Recommended): Configure CloudWatch logging for ECS.
+    # Ensure the log group you specify either exists or will be created by ECS.
+    # logging:
+    #   driver: awslogs
+    #   options:
+    #     awslogs-group: /ecs/your-api-service-log-group # Choose a descriptive name for your log group
+    #     awslogs-region: YOUR_AWS_REGION 
+    #     awslogs-stream-prefix: api-service # Or another suitable prefix
+    # TODO_API_RESOURCES (Recommended): Define CPU and Memory for the ECS task.
+    # Valid values depend on AWS Fargate configurations. Refer to AWS documentation for supported CPU/Memory combinations.
+    # CPU is typically specified in CPU units (e.g., 1024 for 1 vCPU). Memory is in MiB (e.g., 2048 for 2GB).
+    # x-aws-cpu: "YOUR_CPU_UNITS_AS_STRING" 
+    # x-aws-memory: "YOUR_MEMORY_IN_MIB_AS_STRING"
+    # TODO_API_IAM_ROLE (Optional): Specify an IAM role if the service needs AWS permissions.
+    # x-aws-iam-role: arn:aws:iam::YOUR_ECR_ACCOUNT_ID:role/ecsTaskExecutionRole # Or a more specific role
+    healthcheck: # Healthcheck from Lab06, crucial for ECS service health
+        test: ["CMD-SHELL", "curl -f http://localhost:5000/health || exit 1"]
+        interval: 15s
+        timeout: 5s
+        retries: 3
+        start_period: 10s
+
+  web_frontend_service:
+    # TODO_WEB_IMAGE: Replace with your ECR image URI for the web_frontend_service.
+    # Example: image: 123456789012.dkr.ecr.us-east-1.amazonaws.com/lab08-web-frontend-service:latest
+    image: YOUR_ECR_ACCOUNT_ID.dkr.ecr.YOUR_AWS_REGION.amazonaws.com/your-web-frontend-ecr-repo:latest
+    ports:
+      - "5001:5001" # Container port. For external access, an ALB will target this.
+    environment:
+      - FLASK_ENV=production
+      - API_SERVICE_URL=http://api_service:5000 # DNS resolution for api_service will be handled by ECS service discovery or Load Balancer internal DNS.
+      - SERVICE_ID=ecs_web_instance
+      # FLASK_RUN_PORT is set to 5001 by default in the Dockerfile for web_frontend_service
+    depends_on:
+      api_service: # ECS will manage startup order based on this
+        condition: service_healthy
+    # TODO_WEB_LOGGING (Recommended): Configure CloudWatch logging.
+    # Ensure the log group you specify either exists or will be created by ECS.
+    # logging:
+    #   driver: awslogs
+    #   options:
+    #     awslogs-group: /ecs/your-web-frontend-log-group # Choose a descriptive name
+    #     awslogs-region: YOUR_AWS_REGION
+    #     awslogs-stream-prefix: web-frontend # Or another suitable prefix
+    # TODO_WEB_RESOURCES (Recommended): Define CPU and Memory.
+    # Valid values depend on AWS Fargate configurations. Refer to AWS documentation for supported CPU/Memory combinations.
+    # CPU is typically specified in CPU units (e.g., 1024 for 1 vCPU). Memory is in MiB (e.g., 2048 for 2GB).
+    # x-aws-cpu: "YOUR_CPU_UNITS_AS_STRING"
+    # x-aws-memory: "YOUR_MEMORY_IN_MIB_AS_STRING"
+    # TODO_WEB_LOAD_BALANCER (Highly Recommended for a web service): Configure for Application Load Balancer.
+    # This requires an ALB to be set up by the student in AWS.
+    # The `docker compose up` command can then create the Target Group and Listener Rule.
+    # x-aws-loadbalancer:
+    #   target_group_arn: "arn:aws:elasticloadbalancing:YOUR_AWS_REGION:YOUR_ECR_ACCOUNT_ID:targetgroup/your-ecs-tg/xxxxxxxxxxxxxx"
+    #   # Optional: specify container port if different from the first one in ports list, or if multiple listeners needed
+    #   # container_port: 5001 
+    #   # Optional: specify listener ARN if you want to attach to an existing listener
+    #   # listener_arn: "arn:aws:elasticloadbalancing:YOUR_AWS_REGION:YOUR_ECR_ACCOUNT_ID:listener/app/your-alb/xxxxxx/xxxxxx"
+    healthcheck: # Healthcheck from Lab06
+        test: ["CMD-SHELL", "curl -f http://localhost:5001/health || exit 1"]
+        interval: 15s
+        timeout: 5s
+        retries: 3
+        start_period: 15s
+
+# Note: Network configuration (VPC, subnets, security groups) is typically handled by the ECS cluster setup
+# and the Docker AWS integration context, or can be specified with more x-aws extensions if needed. 

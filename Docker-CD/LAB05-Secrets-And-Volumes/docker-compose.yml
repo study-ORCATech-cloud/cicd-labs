@@ -1,0 +1,66 @@
+version: '3.8'
+
+# This docker-compose.yml will guide students to use Docker Compose secrets
+# and named volumes for data persistence.
+
+# TODO_SECRETS_GLOBAL: Define a global 'secrets' block at the top level.
+# This is where you will declare the 'api_key_secret' that the web service will use.
+# The secret's source will be an external file (e.g., a file named 'api_key.txt'
+# that the student will create in the lab directory).
+# Example of structure:
+# secrets:
+#   your_secret_name_here: # Choose a name for your secret
+#     file: ./path/to/your/secret_file.txt # Path to the file containing the secret
+
+services:
+  web:
+    build:
+      context: ./app # Build context is the app directory
+      dockerfile: Dockerfile # Using the standard Dockerfile from the app directory
+    image: docker-cd-lab05-web
+    ports:
+      - "5006:5000" # Using host port 5006 for this lab
+    environment:
+      - FLASK_ENV=development # Keep it in dev mode for easier debugging during the lab
+      - REDIS_HOST=redis
+      # TODO_WEB_ENV_API_KEY_FILE (Optional but good practice):
+      # Students can optionally override the default secret mount path if they wish.
+      # The app/main.py is coded to look for API_KEY_FILE environment variable.
+      # If not set, it defaults to /run/secrets/api_key_secret.
+      # - API_KEY_FILE=/etc/app_secrets/my_api_key
+    
+    # TODO_WEB_SECRETS: Assign the 'api_key_secret' (defined globally) to this service.
+    # This will make the content of 'api_key.txt' available inside the container
+    # at '/run/secrets/api_key_secret' by default, or at the path specified by 'target' if set.
+    # Example of structure:
+    # secrets:
+    #   - source: your_secret_name_here # Must match a name defined in the global secrets block
+    #     # target: /custom/path/in/container/secret_file # Optional: if you want to change the mount path
+
+    # TODO_WEB_VOLUMES: Define a volume mount for the web application's counter data.
+    # This will persist the data written to '/data/app_counter.txt' (see app/main.py)
+    # Use a named volume (e.g., 'app_data') and map it to '/data' in the container.
+    # Example of structure:
+    # volumes:
+    #   - your_volume_name:/path_in_container_for_webapp_data
+    depends_on:
+      - redis
+
+  redis:
+    image: "redis:6-alpine"
+    ports:
+      - "6384:6379" # Using host port 6384 for this lab's Redis
+    
+    # TODO_REDIS_VOLUME: Configure a named volume for Redis to persist its data.
+    # This ensures that if the Redis container stops or is removed, its data (like the hit counter)
+    # is not lost. Mount a named volume (e.g., 'redis_data') to Redis's data directory, which is '/data'.
+    # Example of structure:
+    # volumes:
+    #   - your_volume_name_for_redis:/path_in_container_for_redis_data
+
+# TODO_VOLUMES_GLOBAL: Define a global 'volumes' block at the top level.
+# This is where you declare the named volumes 'redis_data' and 'app_data'.
+# Example of structure:
+# volumes:
+#   your_first_volume_name:
+#   your_second_volume_name: 

@@ -1,0 +1,71 @@
+# Dockerfile.prod - For creating an optimized production image using multi-stage builds
+
+# --- Builder Stage --- TODO_BUILDER_STAGE_BASE_IMAGE
+# TODO_BUILDER_BASE: Use an appropriate Python image (e.g., python:3.9) as the base for the builder stage.
+# This stage will install dependencies, including dev/test dependencies if you want to run tests here.
+FROM python:3.9 as builder
+
+# TODO_BUILDER_WORKDIR: Set a working directory for the builder stage (e.g., /opt/app_builder).
+WORKDIR /opt/app_builder
+
+# TODO_BUILDER_VENV: Create and activate a virtual environment.
+# This helps isolate dependencies and makes it easier to copy them to the final stage.
+# Example: RUN python -m venv /opt/venv && . /opt/venv/bin/activate (Note: activate doesn't persist across RUN, better to use venv path directly)
+# So, directly use the venv python/pip: RUN python -m venv /opt/venv
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# TODO_BUILDER_COPY_REQ: Copy the requirements.txt from the app directory.
+# Remember, the context for this Dockerfile.prod is the lab root (LAB04-Multi-Stage-Dockerfile-Builds/),
+# so the path to requirements.txt will be ./app/requirements.txt.
+COPY ./app/requirements.txt .
+
+# TODO_BUILDER_INSTALL_DEPS: Install dependencies from requirements.txt into the virtual environment.
+# Use the pip from the virtual environment.
+RUN pip install --no-cache-dir -r requirements.txt
+
+# TODO_BUILDER_COPY_APP: Copy the application code from the ./app directory into the builder stage.
+COPY ./app . 
+
+# TODO_BUILDER_RUN_TESTS (Optional but Recommended Practice):
+# As a CI step within the build, run your unit tests using pytest against the code in the builder stage.
+# If tests fail, the image build should fail, preventing a bad image from being created.
+# Make sure pytest is listed in your requirements.txt if you do this.
+# Example: RUN pytest tests/ (assuming tests/ is a subdir of ./app)
+# RUN pytest tests/
+
+
+# --- Final Stage --- TODO_FINAL_STAGE_BASE_IMAGE
+# TODO_FINAL_BASE: Use a lightweight Python base image (e.g., python:3.9-slim-bullseye) for the final production image.
+FROM python:3.9-slim as final
+
+# TODO_FINAL_WORKDIR: Set the working directory for the final image (e.g., /usr/src/app).
+WORKDIR /usr/src/app
+
+# TODO_FINAL_COPY_VENV: Copy the virtual environment (with installed packages) from the builder stage.
+# This copies only the necessary installed packages, not the build tools or original source if structured well.
+# Example: COPY --from=builder /opt/venv /opt/venv
+COPY --from=builder /opt/venv /opt/venv
+
+# TODO_FINAL_COPY_APP_CODE: Copy the application code (from ./app in the builder, which is now at /opt/app_builder in builder)
+# (excluding tests or other non-essential files for production) from the builder stage to the final image's WORKDIR.
+# Example: COPY --from=builder /opt/app_builder/main.py .  (if only main.py is needed)
+# Or more broadly: COPY --from=builder /opt/app_builder/ . (if you want all files copied from builder's app dir, but be selective)
+# For this simple app, copying the relevant parts of the app directory is fine. Exclude tests if possible.
+COPY --from=builder /opt/app_builder/main.py .
+# If you had templates or static folders in app/, copy them too.
+# e.g. COPY --from=builder /opt/app_builder/templates ./templates
+
+# TODO_FINAL_PATH: Add the virtual environment's bin directory to the PATH in the final image.
+# This ensures that the `python` executable from the venv is used.
+ENV PATH="/opt/venv/bin:$PATH"
+
+# TODO_FINAL_EXPOSE_PORT: Expose the port the Flask application runs on (e.g., 5000).
+EXPOSE 5000
+
+# TODO_FINAL_CMD: Specify the command to run the application.
+# Example: CMD ["python", "-u", "main.py"]
+CMD ["python", "-u", "main.py"]
+
+# Note on user/permissions: For a true production image, you'd also create a non-root user
+# and run the application as that user. This is skipped for simplicity in this lab. 

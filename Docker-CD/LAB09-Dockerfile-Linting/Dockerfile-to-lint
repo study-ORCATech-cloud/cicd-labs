@@ -1,0 +1,30 @@
+# Dockerfile with several linting issues for LAB09
+
+# Issue: Using a non-specific tag for the base image (DL3006)
+FROM python
+
+# Issue: MAINTAINER is deprecated (DL3000)
+MAINTAINER student@example.com
+
+# Issue: apt-get update and install should be in one RUN, and clean up apt lists (DL3009, DL3008, DL3015)
+RUN apt-get update
+RUN apt-get install -y gcc
+
+# Issue: Using ADD instead of COPY for local files (DL3020 for local, generally DL3001 for archives)
+ADD requirements.txt /app/requirements.txt
+ADD . /app
+
+# Issue: No WORKDIR set, commands run from root (DL3002 recommends WORKDIR)
+RUN pip install -r /app/requirements.txt
+
+# Issue: Using cd in a RUN command (DL3003)
+RUN cd /app && python -m compileall .
+
+# Issue: Exposing a port not typically used by Flask or not matching app (DL3011 - if not conventional)
+EXPOSE 8081
+
+# Example of potentially exposing a secret - Hadolint might warn (DL3042 if shell, or other context)
+# RUN echo "MY_SECRET_KEY=supersecret" > .env
+
+# CMD should be in JSON array form (DL3025)
+CMD python /app/main.py 

@@ -1,0 +1,40 @@
+version: '3.8'
+
+# This docker-compose.prod.yml is for running the application using the PRODUCTION Dockerfile (Dockerfile.prod)
+# It should build a smaller, optimized image and run it in a production-like manner (no code volumes, debug mode off).
+
+services:
+  # TODO_WEB_PROD_SERVICE: Define the 'web_prod' service for the production-like application.
+  # - build: Specify the build context and the production Dockerfile.
+  #   - context: . # (The current directory, where Dockerfile.prod is)
+  #   - dockerfile: Dockerfile.prod # (The name of your production Dockerfile)
+  # - image: Give a unique name to your production image (e.g., myapp-prod:latest).
+  # - ports: Map a host port (e.g., 8080) to the container port 5000.
+  # - environment: Ensure Flask runs in production mode.
+  #   - FLASK_ENV=production # (or ensure FLASK_DEBUG is not set to 1, Flask's default is production/no-debug).
+  #   - Set REDIS_HOST to connect to the 'redis_prod' service (e.g., REDIS_HOST=actual_redis_service_name).
+  # - depends_on: Make it depend on 'redis_prod'.
+  web_prod:
+    # Add your web_prod service definition here
+    # Example structure:
+    # build:
+    #   context: ./path/to/build/context
+    #   dockerfile: NameOfYourProductionDockerfile
+    # image: your-custom-image-name:tag
+    # ports:
+    #   - "<host_port>:<container_port>"
+    # environment:
+    #   - YOUR_APP_ENV_VAR=value
+    #   - REDIS_SERVICE_NAME_ENV_VAR=actual_redis_service_name_in_compose
+    # depends_on:
+    #   - actual_redis_service_name_in_compose
+
+  # TODO_REDIS_PROD_SERVICE: Define the 'redis_prod' service.
+  # - image: Use an official Redis image (e.g., 'redis:latest' or 'redis:alpine').
+  # - ports: (Optional) Map a host port (e.g., 6379) if you want to access it externally for this setup.
+  redis_prod:
+    # Add your redis_prod service definition here
+    # Example structure:
+    # image: "redis:<version_tag>"
+    # ports:
+    #   - "<optional_host_redis_port>:<container_redis_port>" 
