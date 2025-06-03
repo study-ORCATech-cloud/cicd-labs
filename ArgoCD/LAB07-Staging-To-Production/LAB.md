@@ -8,7 +8,7 @@ We will start with understanding multi-environment strategies, then implement bo
 
 ## 🚀 Lab Steps
 
-### Phase 1: Understanding Multi-Environment Architecture
+### Phase 1: Copy Lab Materials and Understand Multi-Environment Architecture
 
 **1. Prepare Your Git Repository:**
    a. Use your existing Git repository from previous labs, or create a new public repository named `multi-env-gitops-demo`
@@ -19,32 +19,28 @@ We will start with understanding multi-environment strategies, then implement bo
       ```
    c. This structure separates environment-specific configurations while maintaining common resources
 
-**2. Create Kubernetes Namespaces:**
-   a. Create staging namespace definition:
+**2. Copy Kubernetes Namespaces:**
+   a. Copy staging namespace definition:
       ```bash
-      cat > environments/common/namespace-staging.yaml << 'EOF'
-      apiVersion: v1
-      kind: Namespace
-      metadata:
-        name: webapp-staging
-        labels:
-          environment: staging
-          managed-by: argocd
-      EOF
+      cp ../path-to-cicd-labs/ArgoCD/LAB07-Staging-To-Production/environments/common/namespace-staging.yaml ./environments/common/namespace-staging.yaml
       ```
-   b. Create production namespace definition:
+   
+   b. Review staging namespace:
       ```bash
-      cat > environments/common/namespace-production.yaml << 'EOF'
-      apiVersion: v1
-      kind: Namespace
-      metadata:
-        name: webapp-production
-        labels:
-          environment: production
-          managed-by: argocd
-      EOF
+      cat environments/common/namespace-staging.yaml
       ```
-   c. Apply the namespaces to your cluster:
+   
+   c. Copy production namespace definition:
+      ```bash
+      cp ../path-to-cicd-labs/ArgoCD/LAB07-Staging-To-Production/environments/common/namespace-production.yaml ./environments/common/namespace-production.yaml
+      ```
+   
+   d. Review production namespace:
+      ```bash
+      cat environments/common/namespace-production.yaml
+      ```
+   
+   e. Apply the namespaces to your cluster:
       ```bash
       kubectl apply -f environments/common/namespace-staging.yaml
       kubectl apply -f environments/common/namespace-production.yaml
@@ -57,376 +53,114 @@ We will start with understanding multi-environment strategies, then implement bo
    kubectl describe namespace webapp-production
    ```
 
-### Phase 2: Create Environment-Specific Configurations
+### Phase 2: Copy Environment-Specific Configurations
 
-**4. Create Staging Environment Configuration:**
-   a. Create staging deployment:
+**4. Copy Staging Environment Configuration:**
+   a. Copy staging deployment:
       ```bash
-      cat > environments/staging/deployment.yaml << 'EOF'
-      apiVersion: apps/v1
-      kind: Deployment
-      metadata:
-        name: webapp
-        namespace: webapp-staging
-        labels:
-          app: webapp
-          environment: staging
-          version: v1.0.0
-      spec:
-        replicas: 2
-        selector:
-          matchLabels:
-            app: webapp
-            environment: staging
-        template:
-          metadata:
-            labels:
-              app: webapp
-              environment: staging
-              version: v1.0.0
-          spec:
-            containers:
-            - name: webapp
-              image: nginx:1.21
-              ports:
-              - containerPort: 80
-              env:
-              - name: ENVIRONMENT
-                valueFrom:
-                  configMapKeyRef:
-                    name: webapp-config
-                    key: environment
-              - name: LOG_LEVEL
-                valueFrom:
-                  configMapKeyRef:
-                    name: webapp-config
-                    key: log_level
-              - name: MAX_CONNECTIONS
-                valueFrom:
-                  configMapKeyRef:
-                    name: webapp-config
-                    key: max_connections
-              resources:
-                requests:
-                  memory: "128Mi"
-                  cpu: "100m"
-                limits:
-                  memory: "256Mi"
-                  cpu: "200m"
-              livenessProbe:
-                httpGet:
-                  path: /
-                  port: 80
-                initialDelaySeconds: 10
-                periodSeconds: 10
-              readinessProbe:
-                httpGet:
-                  path: /
-                  port: 80
-                initialDelaySeconds: 5
-                periodSeconds: 5
-      EOF
+      cp ../path-to-cicd-labs/ArgoCD/LAB07-Staging-To-Production/environments/staging/deployment.yaml ./environments/staging/deployment.yaml
+      ```
+   
+   b. Review staging deployment:
+      ```bash
+      cat environments/staging/deployment.yaml
       ```
 
-   b. Create staging service:
+   c. Copy staging service:
       ```bash
-      cat > environments/staging/service.yaml << 'EOF'
-      apiVersion: v1
-      kind: Service
-      metadata:
-        name: webapp-service
-        namespace: webapp-staging
-        labels:
-          app: webapp
-          environment: staging
-      spec:
-        type: NodePort
-        selector:
-          app: webapp
-          environment: staging
-        ports:
-        - port: 80
-          targetPort: 80
-          nodePort: 30080
-          protocol: TCP
-          name: http
-      EOF
+      cp ../path-to-cicd-labs/ArgoCD/LAB07-Staging-To-Production/environments/staging/service.yaml ./environments/staging/service.yaml
+      ```
+   
+   d. Review staging service:
+      ```bash
+      cat environments/staging/service.yaml
       ```
 
-   c. Create staging configuration:
+   e. Copy staging configuration:
       ```bash
-      cat > environments/staging/configmap.yaml << 'EOF'
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: webapp-config
-        namespace: webapp-staging
-        labels:
-          app: webapp
-          environment: staging
-      data:
-        environment: "staging"
-        log_level: "debug"
-        max_connections: "100"
-        database_url: "staging-db.example.com"
-        cache_ttl: "300"
-        feature_flags: "feature_a=true,feature_b=true,feature_c=false"
-      EOF
+      cp ../path-to-cicd-labs/ArgoCD/LAB07-Staging-To-Production/environments/staging/configmap.yaml ./environments/staging/configmap.yaml
+      ```
+   
+   f. Review staging configuration:
+      ```bash
+      cat environments/staging/configmap.yaml
       ```
 
-   d. Create staging horizontal pod autoscaler:
+   g. Copy staging horizontal pod autoscaler:
       ```bash
-      cat > environments/staging/hpa.yaml << 'EOF'
-      apiVersion: autoscaling/v2
-      kind: HorizontalPodAutoscaler
-      metadata:
-        name: webapp-hpa
-        namespace: webapp-staging
-        labels:
-          app: webapp
-          environment: staging
-      spec:
-        scaleTargetRef:
-          apiVersion: apps/v1
-          kind: Deployment
-          name: webapp
-        minReplicas: 2
-        maxReplicas: 5
-        metrics:
-        - type: Resource
-          resource:
-            name: cpu
-            target:
-              type: Utilization
-              averageUtilization: 70
-        - type: Resource
-          resource:
-            name: memory
-            target:
-              type: Utilization
-              averageUtilization: 80
-      EOF
+      cp ../path-to-cicd-labs/ArgoCD/LAB07-Staging-To-Production/environments/staging/hpa.yaml ./environments/staging/hpa.yaml
+      ```
+   
+   h. Review staging HPA:
+      ```bash
+      cat environments/staging/hpa.yaml
       ```
 
-**5. Create Production Environment Configuration:**
-   a. Create production deployment (with higher resources and replicas):
+**5. Copy Production Environment Configuration:**
+   a. Copy production deployment (with higher resources and replicas):
       ```bash
-      cat > environments/production/deployment.yaml << 'EOF'
-      apiVersion: apps/v1
-      kind: Deployment
-      metadata:
-        name: webapp
-        namespace: webapp-production
-        labels:
-          app: webapp
-          environment: production
-          version: v1.0.0
-      spec:
-        replicas: 3
-        selector:
-          matchLabels:
-            app: webapp
-            environment: production
-        template:
-          metadata:
-            labels:
-              app: webapp
-              environment: production
-              version: v1.0.0
-          spec:
-            containers:
-            - name: webapp
-              image: nginx:1.21
-              ports:
-              - containerPort: 80
-              env:
-              - name: ENVIRONMENT
-                valueFrom:
-                  configMapKeyRef:
-                    name: webapp-config
-                    key: environment
-              - name: LOG_LEVEL
-                valueFrom:
-                  configMapKeyRef:
-                    name: webapp-config
-                    key: log_level
-              - name: MAX_CONNECTIONS
-                valueFrom:
-                  configMapKeyRef:
-                    name: webapp-config
-                    key: max_connections
-              resources:
-                requests:
-                  memory: "256Mi"
-                  cpu: "200m"
-                limits:
-                  memory: "512Mi"
-                  cpu: "500m"
-              livenessProbe:
-                httpGet:
-                  path: /
-                  port: 80
-                initialDelaySeconds: 15
-                periodSeconds: 10
-              readinessProbe:
-                httpGet:
-                  path: /
-                  port: 80
-                initialDelaySeconds: 10
-                periodSeconds: 5
-      EOF
+      cp ../path-to-cicd-labs/ArgoCD/LAB07-Staging-To-Production/environments/production/deployment.yaml ./environments/production/deployment.yaml
+      ```
+   
+   b. Review production deployment:
+      ```bash
+      cat environments/production/deployment.yaml
       ```
 
-   b. Create production service:
+   c. Copy production service:
       ```bash
-      cat > environments/production/service.yaml << 'EOF'
-      apiVersion: v1
-      kind: Service
-      metadata:
-        name: webapp-service
-        namespace: webapp-production
-        labels:
-          app: webapp
-          environment: production
-      spec:
-        type: NodePort
-        selector:
-          app: webapp
-          environment: production
-        ports:
-        - port: 80
-          targetPort: 80
-          nodePort: 30090
-          protocol: TCP
-          name: http
-      EOF
+      cp ../path-to-cicd-labs/ArgoCD/LAB07-Staging-To-Production/environments/production/service.yaml ./environments/production/service.yaml
+      ```
+   
+   d. Review production service:
+      ```bash
+      cat environments/production/service.yaml
       ```
 
-   c. Create production configuration (with production-specific settings):
+   e. Copy production configuration (with production-specific settings):
       ```bash
-      cat > environments/production/configmap.yaml << 'EOF'
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: webapp-config
-        namespace: webapp-production
-        labels:
-          app: webapp
-          environment: production
-      data:
-        environment: "production"
-        log_level: "info"
-        max_connections: "500"
-        database_url: "prod-db.example.com"
-        cache_ttl: "3600"
-        feature_flags: "feature_a=true,feature_b=false,feature_c=false"
-      EOF
+      cp ../path-to-cicd-labs/ArgoCD/LAB07-Staging-To-Production/environments/production/configmap.yaml ./environments/production/configmap.yaml
+      ```
+   
+   f. Review production configuration:
+      ```bash
+      cat environments/production/configmap.yaml
       ```
 
-   d. Create production horizontal pod autoscaler (more aggressive scaling):
+   g. Copy production horizontal pod autoscaler (more aggressive scaling):
       ```bash
-      cat > environments/production/hpa.yaml << 'EOF'
-      apiVersion: autoscaling/v2
-      kind: HorizontalPodAutoscaler
-      metadata:
-        name: webapp-hpa
-        namespace: webapp-production
-        labels:
-          app: webapp
-          environment: production
-      spec:
-        scaleTargetRef:
-          apiVersion: apps/v1
-          kind: Deployment
-          name: webapp
-        minReplicas: 3
-        maxReplicas: 10
-        metrics:
-        - type: Resource
-          resource:
-            name: cpu
-            target:
-              type: Utilization
-              averageUtilization: 60
-        - type: Resource
-          resource:
-            name: memory
-            target:
-              type: Utilization
-              averageUtilization: 70
-      EOF
+      cp ../path-to-cicd-labs/ArgoCD/LAB07-Staging-To-Production/environments/production/hpa.yaml ./environments/production/hpa.yaml
+      ```
+   
+   h. Review production HPA:
+      ```bash
+      cat environments/production/hpa.yaml
       ```
 
-### Phase 3: Create ArgoCD Applications for Multi-Environment
+### Phase 3: Copy ArgoCD Applications for Multi-Environment
 
-**6. Create ArgoCD Application for Staging:**
+**6. Copy ArgoCD Application for Staging:**
    ```bash
-   cat > argocd-apps/staging-app.yaml << 'EOF'
-   apiVersion: argoproj.io/v1alpha1
-   kind: Application
-   metadata:
-     name: webapp-staging
-     namespace: argocd
-     labels:
-       environment: staging
-   spec:
-     project: default
-     source:
-       repoURL: YOUR_GIT_REPO_URL_HERE
-       targetRevision: HEAD
-       path: environments/staging
-     destination:
-       server: https://kubernetes.default.svc
-       namespace: webapp-staging
-     syncPolicy:
-       automated:
-         prune: true
-         selfHeal: true
-       syncOptions:
-       - CreateNamespace=false
-       retry:
-         limit: 5
-         backoff:
-           duration: 5s
-           factor: 2
-           maxDuration: 3m
-   EOF
+   cp ../path-to-cicd-labs/ArgoCD/LAB07-Staging-To-Production/argocd-apps/staging-app.yaml ./argocd-apps/staging-app.yaml
    ```
 
-**7. Create ArgoCD Application for Production:**
+**7. Review Staging Application:**
    ```bash
-   cat > argocd-apps/production-app.yaml << 'EOF'
-   apiVersion: argoproj.io/v1alpha1
-   kind: Application
-   metadata:
-     name: webapp-production
-     namespace: argocd
-     labels:
-       environment: production
-   spec:
-     project: default
-     source:
-       repoURL: YOUR_GIT_REPO_URL_HERE
-       targetRevision: HEAD
-       path: environments/production
-     destination:
-       server: https://kubernetes.default.svc
-       namespace: webapp-production
-     syncPolicy:
-       manual: {}
-       syncOptions:
-       - CreateNamespace=false
-       retry:
-         limit: 3
-         backoff:
-           duration: 10s
-           factor: 2
-           maxDuration: 5m
-   EOF
+   cat argocd-apps/staging-app.yaml
    ```
 
-**8. Update ArgoCD Applications with Your Git Repository URL:**
-   a. Replace `YOUR_GIT_REPO_URL_HERE` with your actual Git repository URL:
+**8. Copy ArgoCD Application for Production:**
+   ```bash
+   cp ../path-to-cicd-labs/ArgoCD/LAB07-Staging-To-Production/argocd-apps/production-app.yaml ./argocd-apps/production-app.yaml
+   ```
+
+**9. Review Production Application:**
+   ```bash
+   cat argocd-apps/production-app.yaml
+   ```
+
+**10. Update Git Repository URLs:**
+   a. Update the repository URL in both ArgoCD applications:
       ```bash
       # Replace with your actual Git repository URL
       GIT_REPO_URL="https://github.com/YOUR_USERNAME/multi-env-gitops-demo.git"
@@ -434,17 +168,21 @@ We will start with understanding multi-environment strategies, then implement bo
       sed -i "s|YOUR_GIT_REPO_URL_HERE|$GIT_REPO_URL|g" argocd-apps/staging-app.yaml
       sed -i "s|YOUR_GIT_REPO_URL_HERE|$GIT_REPO_URL|g" argocd-apps/production-app.yaml
       ```
+   b. Verify the URLs were updated correctly:
+      ```bash
+      grep "repoURL" argocd-apps/*.yaml
+      ```
 
-### Phase 4: Deploy Multi-Environment Setup
+### Phase 4: Deploy and Test Environment Separation
 
-**9. Commit Initial Environment Configurations:**
+**11. Commit and Push Initial Configuration:**
    ```bash
-   git add environments/ argocd-apps/
-   git commit -m "Add multi-environment configuration with staging and production"
+   git add .
+   git commit -m "Add multi-environment GitOps configuration"
    git push origin main
    ```
 
-**10. Deploy ArgoCD Applications:**
+**12. Deploy ArgoCD Applications:**
    a. Apply the staging application:
       ```bash
       kubectl apply -f argocd-apps/staging-app.yaml
@@ -453,241 +191,266 @@ We will start with understanding multi-environment strategies, then implement bo
       ```bash
       kubectl apply -f argocd-apps/production-app.yaml
       ```
-   c. Verify applications were created:
+
+**13. Monitor Application Deployment:**
+   a. Open ArgoCD UI and verify both applications appear
+   b. Check that staging syncs automatically
+   c. Verify production requires manual sync (safety measure)
+   d. Monitor the sync status:
       ```bash
       kubectl get applications -n argocd
+      kubectl describe application webapp-staging -n argocd
+      kubectl describe application webapp-production -n argocd
       ```
 
-**11. Monitor Initial Synchronization:**
-   a. Open the ArgoCD UI in your browser
-   b. You should see two applications: `webapp-staging` and `webapp-production`
-   c. The staging application should sync automatically (due to auto-sync policy)
-   d. The production application should be "OutOfSync" and require manual sync
-   e. Manually sync the production application by clicking "SYNC" in the UI
-
-**12. Verify Environment Deployments:**
+**14. Verify Environment Separation:**
    a. Check staging deployment:
       ```bash
-      kubectl get all -n webapp-staging
-      kubectl get configmap -n webapp-staging
+      kubectl get pods -n webapp-staging
+      kubectl get services -n webapp-staging
+      kubectl get configmaps -n webapp-staging
       kubectl get hpa -n webapp-staging
       ```
    b. Check production deployment:
       ```bash
-      kubectl get all -n webapp-production
-      kubectl get configmap -n webapp-production
+      kubectl get pods -n webapp-production
+      kubectl get services -n webapp-production
+      kubectl get configmaps -n webapp-production
       kubectl get hpa -n webapp-production
       ```
-   c. Notice the differences in replica counts and resource limits
+   c. Notice the different resource allocations and replica counts
 
-### Phase 5: Implement Promotion Workflow
-
-**13. Test Staging Environment:**
-   a. Get your Minikube IP:
+**15. Test Applications:**
+   a. Test staging application:
       ```bash
-      minikube ip
+      minikube ip  # Get Minikube IP
+      curl http://<MINIKUBE_IP>:30080/
       ```
-   b. Test staging application:
+   b. Test production application:
       ```bash
-      curl http://<MINIKUBE_IP>:30080
-      ```
-   c. Check staging configuration:
-      ```bash
-      kubectl exec -n webapp-staging deployment/webapp -- env | grep -E "(ENVIRONMENT|LOG_LEVEL|MAX_CONNECTIONS)"
+      curl http://<MINIKUBE_IP>:30090/
       ```
 
-**14. Make a Change in Staging:**
-   a. Update the staging application image version:
+### Phase 5: Implement Environment Promotion Workflow
+
+**16. Test Configuration Differences:**
+   a. Check staging configuration:
       ```bash
-      sed -i 's/nginx:1.21/nginx:1.22/g' environments/staging/deployment.yaml
+      kubectl get configmap webapp-config -n webapp-staging -o yaml
       ```
-   b. Update the version label:
+   b. Check production configuration:
       ```bash
-      sed -i 's/version: v1.0.0/version: v1.1.0/g' environments/staging/deployment.yaml
+      kubectl get configmap webapp-config -n webapp-production -o yaml
       ```
-   c. Add a new configuration to staging:
+   c. Notice the different values for log_level, max_connections, and feature_flags
+
+**17. Simulate Configuration Update in Staging:**
+   a. Update staging configuration:
       ```bash
-      cat >> environments/staging/configmap.yaml << 'EOF'
-        new_feature: "enabled"
-      EOF
+      kubectl patch configmap webapp-config -n webapp-staging --patch '{"data":{"feature_flags":"feature_a=true,feature_b=true,feature_c=true"}}'
+      ```
+   b. Restart staging deployment to pick up changes:
+      ```bash
+      kubectl rollout restart deployment webapp -n webapp-staging
+      ```
+   c. Monitor rollout:
+      ```bash
+      kubectl rollout status deployment webapp -n webapp-staging
       ```
 
-**15. Deploy Change to Staging:**
-   a. Commit the staging changes:
+**18. Test Environment-Specific Scaling:**
+   a. Generate load on staging (simulate traffic):
       ```bash
-      git add environments/staging/
-      git commit -m "Update staging to nginx 1.22 and add new feature"
-      git push origin main
+      kubectl run load-generator --image=busybox --restart=Never --rm -i --tty -- sh -c "while true; do wget -q -O- http://webapp-service.webapp-staging.svc.cluster.local:80; done"
       ```
-   b. The staging application should auto-sync and deploy the changes
-   c. Verify the update in ArgoCD UI and kubectl:
+   b. In another terminal, watch HPA scaling:
       ```bash
-      kubectl describe deployment webapp -n webapp-staging | grep Image
-      kubectl get configmap webapp-config -n webapp-staging -o yaml | grep new_feature
+      kubectl get hpa webapp-hpa -n webapp-staging --watch
+      ```
+   c. Stop the load generator with Ctrl+C and watch scaling down
+
+### Phase 6: Multi-Environment Promotion Workflow
+
+**19. Implement Staged Rollout Process:**
+   a. Update the application image in staging:
+      ```bash
+      kubectl patch deployment webapp -n webapp-staging --patch '{"spec":{"template":{"spec":{"containers":[{"name":"webapp","image":"nginx:1.22"}]}}}}'
+      ```
+   b. Verify the update in staging:
+      ```bash
+      kubectl rollout status deployment webapp -n webapp-staging
+      kubectl get deployment webapp -n webapp-staging -o jsonpath='{.spec.template.spec.containers[0].image}'
       ```
 
-**16. Test and Validate Staging Changes:**
-   a. Test the updated staging application:
+**20. Test Staging After Update:**
+   a. Verify staging is working correctly:
       ```bash
-      curl http://<MINIKUBE_IP>:30080
+      curl http://<MINIKUBE_IP>:30080/
+      kubectl get pods -n webapp-staging
       ```
-   b. Monitor application health:
+   b. Check application logs:
       ```bash
-      kubectl get pods -n webapp-staging -w
-      ```
-   c. Check application logs for any issues:
-      ```bash
-      kubectl logs -n webapp-staging deployment/webapp
+      kubectl logs -l app=webapp -n webapp-staging --tail=10
       ```
 
-**17. Promote Changes to Production:**
-   a. Once satisfied with staging, promote the changes to production:
+**21. Promote Changes to Production:**
+   a. After validating staging, update production deployment:
       ```bash
-      # Copy the image update
-      sed -i 's/nginx:1.21/nginx:1.22/g' environments/production/deployment.yaml
-      sed -i 's/version: v1.0.0/version: v1.1.0/g' environments/production/deployment.yaml
+      kubectl patch deployment webapp -n webapp-production --patch '{"spec":{"template":{"spec":{"containers":[{"name":"webapp","image":"nginx:1.22"}]}}}}'
+      ```
+   b. Monitor production rollout carefully:
+      ```bash
+      kubectl rollout status deployment webapp -n webapp-production --timeout=300s
+      ```
+   c. Verify production application:
+      ```bash
+      curl http://<MINIKUBE_IP>:30090/
+      kubectl get pods -n webapp-production
+      ```
+
+**22. Implement GitOps-Based Promotion:**
+   a. Instead of kubectl patches, update the Git repository:
+      ```bash
+      # Update staging deployment file
+      sed -i 's|nginx:1.21|nginx:1.22|g' environments/staging/deployment.yaml
       
-      # Copy the configuration update
-      cat >> environments/production/configmap.yaml << 'EOF'
-        new_feature: "enabled"
-      EOF
-      ```
-   b. Commit the production changes:
-      ```bash
-      git add environments/production/
-      git commit -m "Promote nginx 1.22 and new feature to production"
+      # Commit and push
+      git add environments/staging/deployment.yaml
+      git commit -m "Update staging to nginx:1.22"
       git push origin main
       ```
-
-**18. Deploy to Production (Manual Approval):**
-   a. In the ArgoCD UI, the production application should show as "OutOfSync"
-   b. Review the differences in the ArgoCD UI
-   c. Manually click "SYNC" to deploy to production
-   d. Monitor the production deployment carefully:
+   b. Watch ArgoCD sync the changes automatically
+   c. After staging validation, promote to production:
       ```bash
-      kubectl get pods -n webapp-production -w
-      ```
-
-### Phase 6: Advanced Environment Management
-
-**19. Implement Environment-Specific Rollback:**
-   a. If there's an issue in production, roll back by reverting the Git commit:
-      ```bash
-      # Revert only the production changes
-      git log --oneline -5  # Find the commit hash
-      git revert COMMIT_HASH_OF_PRODUCTION_PROMOTION
-      git push origin main
-      ```
-   b. The production application will auto-detect the change and show "OutOfSync"
-   c. Manually sync to apply the rollback
-
-**20. Test Blue-Green Deployment Simulation:**
-   a. Create a temporary "blue" version in production:
-      ```bash
-      # Scale up production temporarily
-      kubectl scale deployment webapp --replicas=6 -n webapp-production
-      ```
-   b. Update to a new version:
-      ```bash
-      sed -i 's/nginx:1.22/nginx:1.23/g' environments/production/deployment.yaml
+      # Update production deployment file
+      sed -i 's|nginx:1.21|nginx:1.22|g' environments/production/deployment.yaml
+      
+      # Commit and push
       git add environments/production/deployment.yaml
-      git commit -m "Update production to nginx 1.23 (blue-green test)"
+      git commit -m "Promote nginx:1.22 to production"
       git push origin main
       ```
-   c. Sync in ArgoCD and monitor the rolling update
-   d. The old pods will be terminated gradually as new ones come online
+   d. Manually sync production in ArgoCD UI
 
-**21. Implement Configuration Drift Detection:**
-   a. Manually change something in the cluster:
+### Phase 7: Environment Comparison and Validation
+
+**23. Compare Environment Configurations:**
+   a. Compare deployment configurations:
       ```bash
-      kubectl patch deployment webapp -n webapp-staging -p '{"spec":{"replicas":5}}'
+      diff environments/staging/deployment.yaml environments/production/deployment.yaml
       ```
-   b. Check ArgoCD UI - staging should show as "OutOfSync" due to self-heal being enabled
-   c. ArgoCD should automatically fix the drift within a few minutes
-   d. Production won't auto-heal due to manual sync policy
-
-### Phase 7: Multi-Environment Best Practices
-
-**22. Implement Environment Monitoring:**
-   a. Check resource usage across environments:
+   b. Compare service configurations:
       ```bash
-      echo "=== Staging Resources ==="
+      diff environments/staging/service.yaml environments/production/service.yaml
+      ```
+   c. Compare ConfigMap configurations:
+      ```bash
+      diff environments/staging/configmap.yaml environments/production/configmap.yaml
+      ```
+
+**24. Validate Environment Isolation:**
+   a. Check resource usage in staging:
+      ```bash
       kubectl top pods -n webapp-staging
-      echo "=== Production Resources ==="
+      kubectl describe hpa webapp-hpa -n webapp-staging
+      ```
+   b. Check resource usage in production:
+      ```bash
       kubectl top pods -n webapp-production
-      ```
-   b. Compare HPA status:
-      ```bash
-      kubectl get hpa -n webapp-staging
-      kubectl get hpa -n webapp-production
+      kubectl describe hpa webapp-hpa -n webapp-production
       ```
 
-**23. Document Promotion Procedures:**
-   a. Create a simple promotion checklist:
+**25. Test Rollback Scenarios:**
+   a. Simulate a bad deployment in staging:
       ```bash
-      cat > PROMOTION_CHECKLIST.md << 'EOF'
-      # Production Promotion Checklist
-      
-      ## Pre-Promotion (Staging)
-      - [ ] Feature tested in staging environment
-      - [ ] All staging tests passing
-      - [ ] Performance metrics acceptable
-      - [ ] Security scan completed
-      - [ ] Database migrations tested (if applicable)
-      
-      ## Promotion Process
-      - [ ] Copy changes from staging to production configs
-      - [ ] Update version numbers and labels
-      - [ ] Commit with descriptive message
-      - [ ] Review diff in ArgoCD UI
-      - [ ] Manual sync to production
-      - [ ] Monitor deployment progress
-      
-      ## Post-Promotion
-      - [ ] Verify application functionality
-      - [ ] Check monitoring and logs
-      - [ ] Validate performance metrics
-      - [ ] Update documentation
-      - [ ] Notify stakeholders
-      EOF
+      kubectl patch deployment webapp -n webapp-staging --patch '{"spec":{"template":{"spec":{"containers":[{"name":"webapp","image":"nginx:invalid-tag"}]}}}}'
+      ```
+   b. Watch the rollout fail:
+      ```bash
+      kubectl rollout status deployment webapp -n webapp-staging --timeout=60s
+      kubectl get pods -n webapp-staging
+      ```
+   c. Rollback staging:
+      ```bash
+      kubectl rollout undo deployment webapp -n webapp-staging
+      kubectl rollout status deployment webapp -n webapp-staging
+      ```
+   d. Verify staging is back to working state:
+      ```bash
+      curl http://<MINIKUBE_IP>:30080/
       ```
 
-**24. Understanding Environment Differences:**
-   a. Compare the configurations:
+### Phase 8: Advanced Multi-Environment Features
+
+**26. Implement Environment-Specific Secrets:**
+   a. Create staging secret:
       ```bash
-      echo "=== Staging vs Production Differences ==="
-      echo "Replicas:"
-      grep "replicas:" environments/staging/deployment.yaml environments/production/deployment.yaml
-      echo "Resources:"
-      grep -A 4 "resources:" environments/staging/deployment.yaml environments/production/deployment.yaml
-      echo "Log Level:"
-      grep "log_level:" environments/staging/configmap.yaml environments/production/configmap.yaml
+      kubectl create secret generic webapp-secrets \
+        --from-literal=api-key="staging-api-key-123" \
+        --from-literal=db-password="staging-db-pass" \
+        -n webapp-staging
+      ```
+   b. Create production secret:
+      ```bash
+      kubectl create secret generic webapp-secrets \
+        --from-literal=api-key="production-api-key-456" \
+        --from-literal=db-password="production-db-pass" \
+        -n webapp-production
+      ```
+
+**27. Test Environment-Specific Monitoring:**
+   a. Check staging metrics:
+      ```bash
+      kubectl get events -n webapp-staging --sort-by='.lastTimestamp'
+      kubectl describe deployment webapp -n webapp-staging
+      ```
+   b. Check production metrics:
+      ```bash
+      kubectl get events -n webapp-production --sort-by='.lastTimestamp'
+      kubectl describe deployment webapp -n webapp-production
+      ```
+
+**28. Validate Complete Multi-Environment Setup:**
+   a. Verify both environments are running:
+      ```bash
+      kubectl get all -n webapp-staging
+      kubectl get all -n webapp-production
+      ```
+   b. Check ArgoCD application health:
+      ```bash
+      kubectl get applications -n argocd -o custom-columns=NAME:.metadata.name,HEALTH:.status.health.status,SYNC:.status.sync.status
+      ```
+   c. Test both applications are accessible:
+      ```bash
+      echo "Testing Staging:"
+      curl -s http://<MINIKUBE_IP>:30080/ | head -5
+      echo "Testing Production:"
+      curl -s http://<MINIKUBE_IP>:30090/ | head -5
       ```
 
 ---
 
 ## ✅ Validation Checklist
 
-- [ ] Successfully created separate staging and production namespaces
-- [ ] Created environment-specific configurations with different resource limits
-- [ ] Implemented ConfigMaps with environment-specific settings
-- [ ] Set up HPA with different scaling policies per environment
-- [ ] Created ArgoCD applications for both environments with different sync policies
-- [ ] Successfully deployed applications to both environments
-- [ ] Staging environment has auto-sync enabled and working
-- [ ] Production environment requires manual sync approval
-- [ ] Tested promotion workflow from staging to production
-- [ ] Verified environment-specific configurations are applied correctly
-- [ ] Tested rollback procedures for both environments
-- [ ] Implemented and tested configuration drift detection
-- [ ] Compared resource usage between environments
-- [ ] Understood the differences between staging and production configurations
+- [ ] Successfully copied and reviewed all environment configurations
+- [ ] Created separate namespaces for staging and production environments
+- [ ] Deployed ArgoCD applications for both environments with different sync policies
+- [ ] Verified environment-specific configurations (resources, replicas, settings)
+- [ ] Tested environment isolation and resource separation
+- [ ] Successfully implemented staged rollout from staging to production
+- [ ] Validated horizontal pod autoscaling works differently in each environment
+- [ ] Tested rollback scenarios in staging environment
+- [ ] Implemented environment-specific secrets and configurations
+- [ ] Verified GitOps-based promotion workflow
+- [ ] Confirmed production requires manual intervention while staging is automated
+- [ ] Tested both kubectl-based and Git-based deployment updates
+- [ ] Validated monitoring and observability for both environments
 
 ---
 
 ## 🧹 Cleanup
 
-**1. Delete ArgoCD Applications:**
+**29. Delete ArgoCD Applications:**
    a. In the ArgoCD UI, delete both applications:
       - Click on `webapp-staging` → DELETE → Check "Delete resources" → Confirm
       - Click on `webapp-production` → DELETE → Check "Delete resources" → Confirm
@@ -697,105 +460,46 @@ We will start with understanding multi-environment strategies, then implement bo
       kubectl delete application webapp-production -n argocd
       ```
 
-**2. Delete Namespaces:**
+**30. Delete Namespaces:**
    ```bash
    kubectl delete namespace webapp-staging
    kubectl delete namespace webapp-production
    ```
 
-**3. Clean Up Git Repository (Optional):**
-   a. You can keep the repository for future experiments
-   b. Or clean up if desired:
-      ```bash
-      git rm -r environments/ argocd-apps/ PROMOTION_CHECKLIST.md
-      git commit -m "Clean up multi-environment demo"
-      git push origin main
-      ```
+**31. Clean Up Git Repository (Optional):**
+   ```bash
+   git rm -r environments/ argocd-apps/
+   git commit -m "Clean up multi-environment demo"
+   git push origin main
+   ```
 
-**4. Stop Minikube (If Done):**
+**32. Stop Minikube (If Done):**
    ```bash
    minikube stop
    ```
 
 ---
 
-## 🎓 Key Learnings Summary
+## 🎯 Key Learning Outcomes
 
-### **Multi-Environment Architecture:**
-- ✅ **Environment Separation**: Use namespaces and folder structure for clear isolation
-- ✅ **Configuration Management**: Environment-specific ConfigMaps and resource limits
-- ✅ **Progressive Deployment**: Staging first, then production with manual approval
-- ✅ **Resource Scaling**: Different replica counts and resource limits per environment
-- ❌ **Complexity**: Multiple environments increase operational overhead
-- ❌ **Consistency**: Need to maintain parity while allowing differences
+By completing this lab, you have learned:
 
-### **GitOps Promotion Strategies:**
-- ✅ **Folder-Based**: Clear separation, easy to understand and manage
-- ✅ **Git-Based Workflow**: All changes tracked and auditable
-- ✅ **Rollback Capability**: Easy to revert using Git history
-- ✅ **Automated Staging**: Auto-sync for staging enables faster feedback
-- ❌ **Manual Production**: Requires human approval, can create bottlenecks
-- ❌ **Configuration Drift**: Need monitoring to detect manual changes
+1. **Multi-Environment Architecture**: Understanding how to structure GitOps repositories for multiple environments
+2. **Environment Separation**: Implementing proper isolation between staging and production environments
+3. **Configuration Management**: Managing environment-specific configurations, resources, and settings
+4. **Promotion Workflows**: Implementing safe promotion processes from staging to production
+5. **GitOps Best Practices**: Using Git as the source of truth for environment configurations
+6. **ArgoCD Multi-App Management**: Managing multiple applications with different sync policies
+7. **Rollback Strategies**: Implementing and testing rollback procedures for failed deployments
 
-### **Environment-Specific Configurations:**
-- **Staging Environment:**
-  - Lower resource limits (faster deployment, cost-effective)
-  - Debug logging enabled
-  - Experimental features enabled
-  - Auto-sync for rapid iteration
-  - More aggressive autoscaling testing
-
-- **Production Environment:**
-  - Higher resource limits (performance and reliability)
-  - Info-level logging (security and performance)
-  - Stable features only
-  - Manual sync for change control
-  - Conservative autoscaling policies
-
-### **Best Practices Learned:**
-1. **Environment Parity**: Keep environments similar but not identical
-2. **Resource Management**: Right-size resources for each environment's purpose
-3. **Sync Policies**: Auto-sync for staging, manual for production
-4. **Configuration Management**: Use ConfigMaps for environment-specific settings
-5. **Monitoring**: Implement drift detection and resource monitoring
-6. **Documentation**: Maintain promotion checklists and procedures
-7. **Testing**: Validate in staging before promoting to production
-8. **Rollback Plans**: Always have a rollback strategy ready
-
-### **Advanced Concepts:**
-- **Blue-Green Deployments**: Use multiple environments for zero-downtime deployments
-- **Canary Releases**: Gradual rollout within environments
-- **Feature Flags**: Control feature availability per environment
-- **Database Migrations**: Handle schema changes across environments
-- **Secret Management**: Environment-specific secrets and configurations
+This comprehensive multi-environment setup demonstrates enterprise-grade GitOps practices for managing applications across different environments safely and efficiently.
 
 ---
 
-## 🏗️ Architecture Patterns Deep Dive
+## 📚 Additional Resources
 
-### **Folder-Based vs Branch-Based Strategies:**
-
-**Folder-Based (Used in this lab):**
-- ✅ **Simplicity**: All environments in one branch, clear folder structure
-- ✅ **Visibility**: Easy to compare configurations across environments
-- ✅ **Git Workflow**: Single branch, simpler merge conflicts
-- ❌ **File Duplication**: Similar files replicated across folders
-- ❌ **Bulk Changes**: Changes across environments require multiple file edits
-
-**Branch-Based Alternative:**
-- ✅ **Isolation**: Complete separation between environments
-- ✅ **Release Branching**: Aligns with Git flow release strategies
-- ❌ **Complexity**: Merge conflicts between branches
-- ❌ **Visibility**: Harder to compare environments
-- ❌ **Maintenance**: Multiple branches to maintain
-
-### **Scaling Multi-Environment Architecture:**
-For larger organizations, consider:
-1. **Multiple Clusters**: Separate clusters per environment
-2. **Regional Deployments**: Geographic distribution
-3. **Tenant Isolation**: Multi-tenant environments
-4. **GitOps Operators**: Advanced tools like Flux or ArgoCD ApplicationSets
-
----
-
-End of Lab Instructions. Return to the main `README.md` for Key Concepts and Next Steps. 
+- [ArgoCD Best Practices for Multi-Environment](https://argo-cd.readthedocs.io/en/stable/user-guide/best_practices/)
+- [Kubernetes Multi-Tenancy](https://kubernetes.io/docs/concepts/security/multi-tenancy/)
+- [GitOps Principles](https://opengitops.dev/)
+- [Environment Promotion Strategies](https://www.weave.works/technologies/gitops/)
+- [Horizontal Pod Autoscaling](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) 

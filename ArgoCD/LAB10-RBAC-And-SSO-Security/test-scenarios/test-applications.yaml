@@ -1,0 +1,69 @@
+# Development environment test application
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dev-test-app
+  namespace: argocd
+  labels:
+    environment: development
+spec:
+  project: dev
+  source:
+    repoURL: https://github.com/argoproj/argocd-example-apps.git
+    targetRevision: HEAD
+    path: guestbook
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dev-test
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+
+---
+# Staging environment test application
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: staging-test-app
+  namespace: argocd
+  labels:
+    environment: staging
+spec:
+  project: staging
+  source:
+    repoURL: https://github.com/argoproj/argocd-example-apps.git
+    targetRevision: HEAD
+    path: guestbook
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: staging-test
+  syncPolicy:
+    manual: {}
+    syncOptions:
+    - CreateNamespace=true
+
+---
+# Production environment test application
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: production-test-app
+  namespace: argocd
+  labels:
+    environment: production
+spec:
+  project: production
+  source:
+    repoURL: https://github.com/argoproj/argocd-example-apps.git
+    targetRevision: HEAD
+    path: guestbook
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: production-test
+  syncPolicy:
+    manual: {}
+    syncOptions:
+    - CreateNamespace=true 

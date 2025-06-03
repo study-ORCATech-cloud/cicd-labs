@@ -2,7 +2,7 @@
 
 This section of the **CI/CD Automation Labs** repository is dedicated to mastering **GitHub Actions** — GitHub's built-in automation and CI/CD platform.
 
-These labs will guide you through automating builds, tests, deployments, and managing workflows across various types of projects.
+These labs will guide you through automating builds, tests, deployments, and managing workflows across various types of projects using complete, production-ready workflow configurations.
 
 ---
 
@@ -38,10 +38,10 @@ To effectively work through these labs, you'll need to have your own copy of thi
 3.  **Work on Labs in Your Fork:**
     *   Navigate to the specific lab directory (e.g., `LAB01-Hello-World/`).
     *   Follow the instructions in the lab's `README.md` file.
-    *   You will be editing workflow files (YAML files in `.github/workflows/`) to complete the `TODO` items.
+    *   You will be copying complete, working workflow files from the lab materials to your `.github/workflows/` directory.
 
 4.  **Commit and Push Changes:**
-    *   After making changes to a workflow file, commit and push those changes **to your forked repository**.
+    *   After copying the workflow files to your repository, commit and push those changes **to your forked repository**.
     *   This push will trigger the GitHub Actions workflow you've configured, and you can observe its execution in the "Actions" tab of *your forked repository*.
 
 5.  **Repository Secrets & Environments:**
@@ -49,8 +49,9 @@ To effectively work through these labs, you'll need to have your own copy of thi
     *   Lab 10 requires configuring GitHub Environments (`canary`, `production`).
     *   **Important:** You must configure these secrets and environments in the settings of **your forked repository**, not the original one.
 
-6.  **Solutions:**
-    *   Each lab directory contains a `solutions.md` file with the complete working code and explanations. Refer to this if you get stuck or want to verify your answers.
+6.  **Learn by Doing:**
+    *   Each lab provides complete, working workflow configurations that demonstrate production-ready CI/CD patterns.
+    *   Focus on understanding how each workflow works and the GitHub Actions features being demonstrated.
 
 ---
 
@@ -71,9 +72,9 @@ GitHub-Actions/
 ```
 
 Each lab directory typically contains:
-- `README.md`: Detailed instructions, objectives, `TODO` tasks, and validation steps for that specific lab.
-- `.github/workflows/`: One or more YAML workflow files where you'll implement the CI/CD logic.
-- `solutions.md`: The complete, explained solution for the lab's workflow(s).
+- `README.md`: Detailed instructions, objectives, step-by-step procedures, and validation steps for that specific lab.
+- `.github/workflows/`: Complete, working YAML workflow files ready to copy and use.
+- **Copy-and-Learn Methodology**: All workflow files are production-ready and functional - students copy them and learn by following detailed instructions.
 - Optional sample application code (`app/`, `services/`, etc.) relevant to the lab's scenario.
 
 ---
@@ -89,7 +90,7 @@ Each lab directory typically contains:
 
 ## 💬 Contributing
 
-While these labs are designed for individual learning, if you find errors or have suggestions for improvements to the lab instructions or solutions:
+While these labs are designed for individual learning, if you find errors or have suggestions for improvements to the lab instructions or configurations:
 1.  Consider opening an Issue in the original repository.
 2.  Alternatively, you can fork the original repository, make your suggested changes in a branch, and then open a Pull Request back to the original repository with a clear description of your proposed improvements.
 

@@ -1,0 +1,78 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: production
+  namespace: argocd
+spec:
+  description: Production environment project with strict controls
+  
+  sourceRepos:
+  - 'https://github.com/*/production-*'
+  - 'https://github.com/*/prod-*'
+  
+  destinations:
+  - namespace: 'production-*'
+    server: https://kubernetes.default.svc
+  - namespace: 'prod-*'
+    server: https://kubernetes.default.svc
+  
+  # Very restrictive cluster resources
+  clusterResourceWhitelist:
+  - group: ''
+    kind: Namespace
+  
+  namespaceResourceWhitelist:
+  - group: ''
+    kind: ConfigMap
+  - group: ''
+    kind: Secret
+  - group: ''
+    kind: Service
+  - group: apps
+    kind: Deployment
+  - group: apps
+    kind: ReplicaSet
+  - group: ''
+    kind: Pod
+  - group: networking.k8s.io
+    kind: Ingress
+  - group: autoscaling
+    kind: HorizontalPodAutoscaler
+  
+  # Strict blacklist for production
+  namespaceResourceBlacklist:
+  - group: ''
+    kind: ServiceAccount
+  - group: rbac.authorization.k8s.io
+    kind: Role
+  - group: rbac.authorization.k8s.io
+    kind: RoleBinding
+  - group: rbac.authorization.k8s.io
+    kind: ClusterRole
+  - group: rbac.authorization.k8s.io
+    kind: ClusterRoleBinding
+  
+  # Sync windows for production (only allow during business hours)
+  syncWindows:
+  - kind: allow
+    schedule: '0 9 * * 1-5'  # Mon-Fri 9 AM
+    duration: 8h
+    applications:
+    - '*'
+    manualSync: true
+  
+  roles:
+  - name: prod-admin
+    description: Production administrator
+    policies:
+    - p, proj:production:prod-admin, applications, *, production/*, allow
+    groups:
+    - YOUR_GITHUB_ORG:prod-admins
+  
+  - name: prod-viewer
+    description: Production read-only access
+    policies:
+    - p, proj:production:prod-viewer, applications, get, production/*, allow
+    groups:
+    - YOUR_GITHUB_ORG:dev-team
+    - YOUR_GITHUB_ORG:staging-admins 

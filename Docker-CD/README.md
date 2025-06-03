@@ -18,7 +18,7 @@ Throughout this Docker-CD track, you will explore:
 -   **CI/CD Integration:** Building Docker images within automated CI pipelines (e.g., using GitHub Actions).
 -   **Best Practices:** Optimizing `Dockerfile`s for build speed and image size, managing secrets and configurations, and implementing health checks.
 -   **Deployment Strategies:** Deploying containerized applications, including to cloud platforms like AWS ECS (Elastic Container Service).
--   **Advanced Topics:** Dockerfile linting and log aggregation for containerized services.
+-   **Advanced Topics:** Multi-stage builds, Dockerfile linting, and log aggregation for containerized services.
 
 ---
 
@@ -28,26 +28,26 @@ The labs are designed to be followed sequentially, as concepts build upon each o
 
 ```bash
 Docker-CD/
-├── README.md                         # Overview of the Docker-CD track (this file)
-├── LAB01-Dockerfile-Build/           # Learn to write your first Dockerfile for a Python app
-├── LAB02-Compose-CI-Integration/     # Integrate Docker Compose with CI for multi-container apps
-├── LAB03-Compose-Dev-Environments/   # Use Docker Compose to create consistent development environments
-├── LAB04-Deploy-With-GitHub-Actions/ # Automate Docker image builds and pushes using GitHub Actions
-├── LAB05-Secrets-And-Volumes/        # Manage sensitive data and persistent storage with Docker
-├── LAB06-Service-Health-Checks/      # Implement health checks in Docker services
-├── LAB07-Microservices-CI-Pipeline/  # Build a CI pipeline for a multi-service (microservices) application
-├── LAB08-Deploy-To-ECS/              # Deploy Docker containers to Amazon Elastic Container Service
-├── LAB09-Dockerfile-Linting/         # Improve Dockerfile quality with linting tools
-└── LAB10-Logs-Aggregation-CD/        # Aggregate logs from multiple Docker containers
+├── README.md                          # Overview of the Docker-CD track (this file)
+├── LAB01-Dockerfile-Build/            # Learn to write your first Dockerfile for a Python app
+├── LAB02-Compose-CI-Integration/      # Integrate Docker Compose with CI for multi-container apps
+├── LAB03-Compose-Dev-Environments/    # Use Docker Compose to create consistent development environments
+├── LAB04-Multi-Stage-Dockerfile-Builds/ # Master multi-stage Docker builds for optimized images
+├── LAB05-Secrets-And-Volumes/         # Manage sensitive data and persistent storage with Docker
+├── LAB06-Service-Health-Checks/       # Implement health checks in Docker services
+├── LAB07-Microservices-CI-Pipeline/   # Build a CI pipeline for a multi-service (microservices) application
+├── LAB08-Deploy-To-ECS/               # Deploy Docker containers to Amazon Elastic Container Service
+├── LAB09-Dockerfile-Linting/          # Improve Dockerfile quality with linting tools
+└── LAB10-Logs-Aggregation-CD/         # Aggregate logs from multiple Docker containers
 ```
 
 Each individual lab directory (e.g., `LAB01-Dockerfile-Build/`) contains:
 -   A `README.md` file with detailed objectives, prerequisites, step-by-step instructions for that lab, validation checklists, cleanup steps, and key concepts.
 -   Any necessary sample application code (usually in an `app/` subdirectory).
--   A `Dockerfile` (often with `TODO`s for you to complete).
--   `docker-compose.yml` files where applicable.
+-   Complete, working `Dockerfile` configurations ready to copy and use.
+-   `docker-compose.yml` files where applicable, fully functional out of the box.
 -   Workflow files (e.g., for GitHub Actions) when the lab involves CI/CD automation.
--   A `solutions.md` file providing the completed configuration files and explanations.
+-   **Copy-and-Learn Methodology**: All files are complete and functional - students copy configurations and learn by following detailed step-by-step instructions.
 
 ---
 
@@ -75,10 +75,10 @@ To successfully complete the labs in this Docker-CD track, you should have the f
 2.  **Clone Your Fork:** Clone your forked repository to your local machine.
 3.  **Navigate to the Lab:** Change into the specific lab directory you are working on (e.g., `cd Docker-CD/LAB01-Dockerfile-Build`).
 4.  **Read the Lab `README.md`:** Each lab has its own `README.md` with detailed instructions. Read it carefully!
-5.  **Complete `TODO`s:** Many labs will have `TODO` comments in files like `Dockerfile`, `docker-compose.yml`, or CI workflow files. You'll need to complete these based on the lab instructions.
-6.  **Follow Instructions:** Execute the commands as described in the lab's `README.md`.
+5.  **Copy the Provided Files:** All Docker configurations, compose files, and application code are complete and ready to use. Simply copy them to your working directory as instructed.
+6.  **Follow Instructions:** Execute the commands as described in the lab's `README.md` to build, run, and test the containerized applications.
 7.  **Validate:** Use the validation checklist in each lab's `README.md` to ensure you've achieved the objectives.
-8.  **Consult Solutions:** If you get stuck or want to verify your work, refer to the `solutions.md` file within the lab directory.
+8.  **Learn by Doing:** Focus on understanding how each configuration works rather than solving puzzles - all files are production-ready examples.
 9.  **Clean Up:** Follow the cleanup steps to remove any created Docker images, containers, or other resources.
 
 ---
@@ -89,7 +89,7 @@ We welcome contributions! If you have ideas for new Docker-CD labs, improvements
 -   Fork this repository.
 -   Create a new branch for your changes.
 -   Follow the existing lab format (e.g., `LABxx-Descriptive-Name`).
--   Ensure your lab is well-documented with a clear `README.md` and a `solutions.md`.
+-   Ensure your lab is well-documented with a clear `README.md` and complete working configurations.
 -   Submit a Pull Request to the main repository.
 
 ---

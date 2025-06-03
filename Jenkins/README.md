@@ -55,8 +55,10 @@ Jenkins/
 ```
 
 Each lab directory (`LABxx-*`) typically contains:
-- `README.md`: Detailed instructions, objectives, tasks (often UI-based or `Jenkinsfile` `TODO`s), and validation steps.
-- `solutions.md`: Reference solutions, UI step confirmations, or completed `Jenkinsfile` code.
+- `README.md`: Detailed instructions, objectives, and validation steps.
+- `LAB.md`: Step-by-step procedures for hands-on Jenkins configuration and pipeline development.
+- Complete, working configuration files (e.g., `Jenkinsfile`) ready to copy and use.
+- **Copy-and-Learn Methodology**: All configurations are production-ready - students copy them and learn by following detailed instructions.
 - Supporting files (e.g., Python scripts, `Dockerfile`) as needed for the lab.
 
 ---
@@ -79,7 +81,7 @@ If you find errors, have suggestions for improvements, or would like to contribu
 1.  Fork the main `cicd-labs` repository.
 2.  Create a branch for your changes/additions.
 3.  Follow the lab naming pattern (`LABxx-Descriptive-Name`).
-4.  Ensure your lab includes a clear `README.md`, any necessary supporting files, and a `solutions.md`.
+4.  Ensure your lab includes a clear `README.md`, detailed `LAB.md` instructions, and complete working configurations.
 5.  Open a Pull Request back to the original repository with a clear description of your contribution.
 
 ---

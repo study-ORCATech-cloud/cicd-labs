@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: test-notifications-healthy
+  namespace: argocd
+  labels:
+    environment: staging
+  annotations:
+    notifications.argoproj.io/subscribe.on-sync-succeeded.slack: ""
+    notifications.argoproj.io/subscribe.on-sync-failed.slack: ""
+    notifications.argoproj.io/subscribe.on-health-degraded.slack: ""
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/argoproj/argocd-example-apps.git
+    targetRevision: HEAD
+    path: guestbook
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: test-notifications
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true 

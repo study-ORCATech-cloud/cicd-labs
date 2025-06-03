@@ -1,0 +1,83 @@
+name: Promote to Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to promote to production'
+        required: true
+        type: string
+      confirm:
+        description: 'Type "promote" to confirm production deployment'
+        required: true
+        type: string
+
+env:
+  DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+
+jobs:
+  validate-input:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Validate confirmation
+      if: ${{ github.event.inputs.confirm != 'promote' }}
+      run: |
+        echo "❌ Production promotion cancelled. Please type 'promote' to confirm."
+        exit 1
+
+  promote-production:
+    needs: validate-input
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Verify image exists
+      run: |
+        # Check if the specified version exists in Docker Hub
+        VERSION="${{ github.event.inputs.version }}"
+        curl -f "https://registry.hub.docker.com/v2/repositories/${{ env.DOCKER_HUB_USERNAME }}/cicd-demo/tags/$VERSION/" || {
+          echo "❌ Image tag $VERSION not found in Docker Hub"
+          exit 1
+        }
+        echo "✅ Image tag $VERSION verified in Docker Hub"
+
+    - name: Update production deployment
+      run: |
+        VERSION="${{ github.event.inputs.version }}"
+        
+        # Update the image tag in production deployment
+        sed -i "s|image: ${{ env.DOCKER_HUB_USERNAME }}/cicd-demo:.*|image: ${{ env.DOCKER_HUB_USERNAME }}/cicd-demo:$VERSION|g" gitops-repo/environments/production/deployment.yaml
+        
+        # Update kustomization
+        sed -i "s|newTag: .*|newTag: $VERSION|g" gitops-repo/environments/production/kustomization.yaml
+        
+        # Update version in deployment metadata
+        sed -i "s|version: v.*|version: $VERSION|g" gitops-repo/environments/production/deployment.yaml
+        
+        # Update APP_VERSION environment variable
+        sed -i "s|value: \"v.*\"|value: \"$VERSION\"|g" gitops-repo/environments/production/deployment.yaml
+
+    - name: Commit and push changes
+      run: |
+        VERSION="${{ github.event.inputs.version }}"
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add gitops-repo/environments/production/
+        git commit -m "🚀 Promote $VERSION to production" || exit 0
+        git push
+
+    - name: Create production deployment summary
+      run: |
+        VERSION="${{ github.event.inputs.version }}"
+        echo "## 🚀 Production Deployment" >> $GITHUB_STEP_SUMMARY
+        echo "Successfully promoted **$VERSION** to production environment." >> $GITHUB_STEP_SUMMARY
+        echo "- **Image:** \`${{ env.DOCKER_HUB_USERNAME }}/cicd-demo:$VERSION\`" >> $GITHUB_STEP_SUMMARY
+        echo "- **Environment:** production" >> $GITHUB_STEP_SUMMARY
+        echo "- **ArgoCD Application:** cicd-demo-production" >> $GITHUB_STEP_SUMMARY
+        echo "- **Promoted by:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "⚠️ **Remember to manually sync the ArgoCD application for production deployment.**" >> $GITHUB_STEP_SUMMARY 

@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: test-notifications-sync-fail
+  namespace: argocd
+  labels:
+    environment: staging
+  annotations:
+    notifications.argoproj.io/subscribe.on-sync-succeeded.slack: ""
+    notifications.argoproj.io/subscribe.on-sync-failed.slack: ""
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/argoproj/argocd-example-apps.git
+    targetRevision: HEAD
+    path: invalid-path-for-testing
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: test-notifications-fail
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true 

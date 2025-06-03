@@ -1,0 +1,63 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: dev
+  namespace: argocd
+spec:
+  description: Development team project
+  
+  # Source repositories allowed for this project
+  sourceRepos:
+  - 'https://github.com/*/dev-*'
+  - 'https://github.com/*/development-*'
+  - 'https://github.com/argoproj/argocd-example-apps'
+  
+  # Destination clusters and namespaces
+  destinations:
+  - namespace: 'dev-*'
+    server: https://kubernetes.default.svc
+  - namespace: 'development-*'
+    server: https://kubernetes.default.svc
+  
+  # Cluster resource whitelist
+  clusterResourceWhitelist:
+  - group: ''
+    kind: Namespace
+  
+  # Namespace resource whitelist
+  namespaceResourceWhitelist:
+  - group: ''
+    kind: ConfigMap
+  - group: ''
+    kind: Secret
+  - group: ''
+    kind: Service
+  - group: apps
+    kind: Deployment
+  - group: apps
+    kind: ReplicaSet
+  - group: ''
+    kind: Pod
+  
+  # Denied resources for security
+  namespaceResourceBlacklist:
+  - group: ''
+    kind: ServiceAccount
+  
+  # RBAC policies specific to this project
+  roles:
+  - name: dev-lead
+    description: Development team lead
+    policies:
+    - p, proj:dev:dev-lead, applications, *, dev/*, allow
+    - p, proj:dev:dev-lead, repositories, *, *, allow
+    groups:
+    - YOUR_GITHUB_ORG:dev-leads
+  
+  - name: dev-member
+    description: Development team member
+    policies:
+    - p, proj:dev:dev-member, applications, get, dev/*, allow
+    - p, proj:dev:dev-member, applications, sync, dev/*, allow
+    groups:
+    - YOUR_GITHUB_ORG:dev-team 

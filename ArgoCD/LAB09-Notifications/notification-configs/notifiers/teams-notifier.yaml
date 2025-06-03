@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-notifications-teams-cm
+  namespace: argocd
+data:
+  service.teams: |
+    themeColor: "#FF0000"
+    recipientUrls:
+      YOUR_TEAMS_WEBHOOK_URL: |
+        - when: app.metadata.labels.environment == 'production'
+  
+  template.app-sync-teams: |
+    teams:
+      themeColor: "#36a64f"
+      title: "ArgoCD Application Sync"
+      summary: "Application {{.app.metadata.name}} sync status"
+      sections: |
+        [{
+          "activityTitle": "Application Sync {{.app.status.operationState.phase}}",
+          "activitySubtitle": "{{.app.metadata.name}} in {{.app.spec.destination.namespace}}",
+          "facts": [
+            {
+              "name": "Repository",
+              "value": "{{.app.spec.source.repoURL}}"
+            },
+            {
+              "name": "Environment",
+              "value": "{{.app.metadata.labels.environment | default \"unknown\"}}"
+            },
+            {
+              "name": "Status",
+              "value": "{{.app.status.operationState.phase}}"
+            }
+          ]
+        }] 

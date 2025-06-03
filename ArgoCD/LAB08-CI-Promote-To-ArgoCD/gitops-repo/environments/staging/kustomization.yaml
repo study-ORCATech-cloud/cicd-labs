@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- deployment.yaml
+
+namespace: cicd-staging
+
+commonLabels:
+  app: cicd-demo
+  environment: staging
+  managed-by: argocd
+
+images:
+- name: YOUR_DOCKERHUB_USERNAME/cicd-demo
+  newTag: v1.0.0 

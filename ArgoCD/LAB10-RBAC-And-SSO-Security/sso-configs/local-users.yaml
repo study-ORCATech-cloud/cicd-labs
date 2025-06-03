@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cm-local
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: argocd-cm
+    app.kubernetes.io/part-of: argocd
+data:
+  # Local user accounts
+  accounts.developer: apiKey, login
+  accounts.devops: apiKey, login
+  accounts.auditor: login
+  
+  # Password for local users (will be hashed)
+  accounts.developer.password: "$2a$10$mivhwttXM0VwqGoKQ8ZTLun0d6aPt3S17/Aq3v8pC8vfOQo9GZ3wW"  # password: dev123
+  accounts.devops.password: "$2a$10$mivhwttXM0VwqGoKQ8ZTLun0d6aPt3S17/Aq3v8pC8vfOQo9GZ3wW"     # password: ops123
+  accounts.auditor.password: "$2a$10$mivhwttXM0VwqGoKQ8ZTLun0d6aPt3S17/Aq3v8pC8vfOQo9GZ3wW"    # password: audit123
+  
+  # Enable password updates
+  accounts.developer.passwordMtime: "2024-01-01T00:00:00Z"
+  accounts.devops.passwordMtime: "2024-01-01T00:00:00Z"
+  accounts.auditor.passwordMtime: "2024-01-01T00:00:00Z" 

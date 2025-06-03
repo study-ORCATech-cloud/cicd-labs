@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cicd-demo-production
+  namespace: argocd
+  labels:
+    environment: production
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/YOUR_GITHUB_USERNAME/cicd-gitops-demo.git
+    targetRevision: HEAD
+    path: gitops-repo/environments/production
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cicd-production
+  syncPolicy:
+    manual: {}
+    syncOptions:
+    - CreateNamespace=true
+    retry:
+      limit: 3
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 5m 

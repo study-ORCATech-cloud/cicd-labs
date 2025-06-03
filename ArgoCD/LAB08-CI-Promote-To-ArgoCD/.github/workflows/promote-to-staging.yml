@@ -1,0 +1,58 @@
+name: Promote to Staging
+
+on:
+  workflow_run:
+    workflows: ["CI - Build and Test"]
+    types:
+      - completed
+
+env:
+  DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+
+jobs:
+  promote-staging:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Get latest image tag
+      id: get-tag
+      run: |
+        # Get the latest tag from Docker Hub
+        LATEST_TAG=$(curl -s "https://registry.hub.docker.com/v2/repositories/${{ env.DOCKER_HUB_USERNAME }}/cicd-demo/tags/" | jq -r '.results[0].name')
+        echo "latest-tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+        echo "Latest tag: $LATEST_TAG"
+
+    - name: Update staging deployment
+      run: |
+        # Update the image tag in staging deployment
+        sed -i "s|image: ${{ env.DOCKER_HUB_USERNAME }}/cicd-demo:.*|image: ${{ env.DOCKER_HUB_USERNAME }}/cicd-demo:${{ steps.get-tag.outputs.latest-tag }}|g" gitops-repo/environments/staging/deployment.yaml
+        
+        # Update kustomization
+        sed -i "s|newTag: .*|newTag: ${{ steps.get-tag.outputs.latest-tag }}|g" gitops-repo/environments/staging/kustomization.yaml
+        
+        # Update version in deployment metadata
+        sed -i "s|version: v.*|version: ${{ steps.get-tag.outputs.latest-tag }}|g" gitops-repo/environments/staging/deployment.yaml
+        
+        # Update APP_VERSION environment variable
+        sed -i "s|value: \"v.*\"|value: \"${{ steps.get-tag.outputs.latest-tag }}\"|g" gitops-repo/environments/staging/deployment.yaml
+
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add gitops-repo/environments/staging/
+        git commit -m "🚀 Promote ${{ steps.get-tag.outputs.latest-tag }} to staging" || exit 0
+        git push
+
+    - name: Create staging deployment comment
+      run: |
+        echo "## 🚀 Staging Deployment" >> $GITHUB_STEP_SUMMARY
+        echo "Successfully promoted **${{ steps.get-tag.outputs.latest-tag }}** to staging environment." >> $GITHUB_STEP_SUMMARY
+        echo "- **Image:** \`${{ env.DOCKER_HUB_USERNAME }}/cicd-demo:${{ steps.get-tag.outputs.latest-tag }}\`" >> $GITHUB_STEP_SUMMARY
+        echo "- **Environment:** staging" >> $GITHUB_STEP_SUMMARY
+        echo "- **ArgoCD Application:** cicd-demo-staging" >> $GITHUB_STEP_SUMMARY 

@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-audit-cm
+  namespace: argocd
+data:
+  audit.yaml: |
+    # ArgoCD Audit Configuration
+    enabled: true
+    
+    # Log all authentication events
+    logAuthenticationEvents: true
+    
+    # Log application management events
+    logApplicationEvents: true
+    
+    # Log RBAC authorization events
+    logAuthorizationEvents: true
+    
+    # Events to audit
+    events:
+      - login
+      - logout
+      - application.create
+      - application.update
+      - application.delete
+      - application.sync
+      - project.create
+      - project.update
+      - project.delete
+      - repository.create
+      - repository.update
+      - repository.delete
+      - cluster.create
+      - cluster.update
+      - cluster.delete 

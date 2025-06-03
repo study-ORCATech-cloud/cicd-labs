@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cm-security
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: argocd-cm
+    app.kubernetes.io/part-of: argocd
+data:
+  # Session timeout and security settings
+  server.session.max.duration: "8h"
+  server.session.timeout: "1h"
+  
+  # Enable audit logging
+  server.audit.enabled: "true"
+  server.audit.log.path: "/tmp/audit.log"
+  
+  # Password policy
+  password.pattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"
+  
+  # Rate limiting
+  server.rate.limit: "100"
+  server.rate.limit.burst: "200"
+  
+  # TLS configuration
+  server.tls.config: |
+    cipherSuites:
+    - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+    - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
+    - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+    minVersion: "1.2"
+    maxVersion: "1.3" 

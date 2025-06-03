@@ -211,6 +211,6 @@ When you're finished with an Argo CD lab session or want to free up resources:
 
 You have now successfully set up Minikube and installed Argo CD! You are ready to proceed with the labs.
 
-Start with **[LAB01-Install-ArgoCD-Minikube/README.md](./LAB01-Install-ArgoCD-Minikube/README.md)**. Although this setup guide covers installation, Lab 01 might reiterate some steps or focus on the very first interaction with Argo CD.
+Start with **[LAB01-Deploy-First-Application/README.md](./LAB01-Deploy-First-Application/README.md)**. This lab will guide you through deploying your first application using Argo CD and experiencing the core GitOps workflow.
 
 Enjoy your GitOps journey with Argo CD! 🚢🔄⚙️ 

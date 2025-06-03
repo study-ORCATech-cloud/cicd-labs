@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-notifications-env-cm
+  namespace: argocd
+data:
+  # Production-specific template with escalation
+  template.production-alert: |
+    slack:
+      title: "🚨 PRODUCTION ALERT"
+      text: |
+        **PRODUCTION ISSUE DETECTED**
+        
+        Application: **{{.app.metadata.name}}**
+        Environment: **PRODUCTION**
+        Issue: {{.app.status.health.status}} / {{.app.status.sync.status}}
+        
+        @channel - Immediate attention required!
+      color: "danger"
+      attachments: |
+        [{
+          "title": "Production Emergency Response",
+          "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+          "color": "danger",
+          "fields": [
+            {
+              "title": "Runbook",
+              "value": "Follow production incident response procedures",
+              "short": false
+            },
+            {
+              "title": "Health Status",
+              "value": "{{.app.status.health.status}}",
+              "short": true
+            },
+            {
+              "title": "Sync Status",
+              "value": "{{.app.status.sync.status}}",
+              "short": true
+            }
+          ],
+          "actions": [
+            {
+              "type": "button",
+              "text": "View in ArgoCD",
+              "url": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}"
+            },
+            {
+              "type": "button",
+              "text": "Emergency Procedures",
+              "url": "https://your-company.com/emergency-procedures"
+            }
+          ]
+        }]
+  
+  # Staging template - less urgent
+  template.staging-notification: |
+    slack:
+      title: "📋 Staging Update"
+      text: |
+        Staging application **{{.app.metadata.name}}** status update:
+        Health: {{.app.status.health.status}} | Sync: {{.app.status.sync.status}}
+      color: "#36a64f" 

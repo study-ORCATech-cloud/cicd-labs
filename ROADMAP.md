@@ -1,6 +1,6 @@
 # CI/CD Automation Labs – Roadmap
 
-Welcome to the master roadmap for the **CI/CD Automation Labs** repository. This roadmap organizes labs by CI/CD tool to provide deep, hands-on experience in building, testing, and deploying software with real-world workflows.
+Welcome to the master roadmap for the **CI/CD Automation Labs** repository. This roadmap organizes labs by CI/CD tool to provide deep, hands-on experience in building, testing, and deploying software with real-world workflows using **copy-based learning methodology** with production-ready configurations.
 
 ---
 
@@ -48,7 +48,7 @@ Use Docker and Docker Compose to manage deployments.
 | 01  | Dockerfile CI Build                  | Build/test Docker images               |
 | 02  | Docker Compose Local CI              | Compose up/down in CI pipeline         |
 | 03  | Docker Compose for Dev Environments  | Local dev automation                   |
-| 04  | GitHub Actions + Compose Deploy      | Multi-container CI/CD                  |
+| 04  | Multi-Stage Dockerfile Builds        | Optimized builds and image size        |
 | 05  | Compose with Secrets & Volumes       | Security, persistence                  |
 | 06  | Service Health Checks & Retry        | Health checks in orchestration         |
 | 07  | CI Workflow for Microservices        | Test & deploy multi-service stack      |
@@ -63,8 +63,8 @@ Learn GitOps by automating Kubernetes deployments with ArgoCD.
 
 | Lab | Title                                | Focus                                  |
 |-----|--------------------------------------|----------------------------------------|
-| 01  | ArgoCD Install on Minikube           | ArgoCD local environment setup         |
-| 02  | Deploy K8s App via Git Repo          | GitOps fundamentals                    |
+| 01  | Deploy First Application with ArgoCD | ArgoCD UI mastery and GitOps introduction |
+| 02  | Deploy K8s App via Git Repo          | GitOps fundamentals and personal repos |
 | 03  | Use Helm Charts with ArgoCD          | Helm + GitOps CD flow                  |
 | 04  | App Rollback with GitOps             | Revisions and rollbacks                |
 | 05  | Sync Policies and Auto Deployments   | Sync policies, self-healing apps       |
@@ -77,10 +77,16 @@ Learn GitOps by automating Kubernetes deployments with ArgoCD.
 ---
 
 ## 🧠 Suggested Learning Flow
-- Start with **GitHub Actions** for basic CI concepts
-- Advance to **Jenkins** for custom pipelines and agent control
-- Explore **Docker-CD** for containerized CD pipelines
-- Finish with **ArgoCD** to adopt a GitOps deployment model
+
+**Teaching Methodology**: All labs use a **copy-based learning approach** — complete, production-ready configurations are provided for students to copy and deploy while following detailed step-by-step instructions. This methodology ensures immediate success and builds confidence through hands-on experience with enterprise-grade DevOps tools.
+
+**Recommended Progression**:
+- Start with **GitHub Actions** for basic CI concepts and cloud-native automation
+- Advance to **Jenkins** for custom pipelines, agent control, and enterprise CI/CD
+- Explore **Docker-CD** for containerized CD pipelines and microservices deployment
+- Finish with **ArgoCD** to adopt a GitOps deployment model and Kubernetes-native CD
+
+Each track builds foundational knowledge that enhances understanding of the subsequent technologies.
 
 ---
 

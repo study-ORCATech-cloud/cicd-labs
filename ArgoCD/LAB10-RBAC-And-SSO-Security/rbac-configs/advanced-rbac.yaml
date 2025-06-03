@@ -1,0 +1,109 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-rbac-cm
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: argocd-rbac-cm
+    app.kubernetes.io/part-of: argocd
+data:
+  # Default policy for unknown users
+  policy.default: role:readonly
+  
+  # Advanced RBAC policies with custom roles
+  policy.csv: |
+    ########################
+    # Built-in Admin Role
+    ########################
+    p, role:admin, applications, *, */*, allow
+    p, role:admin, clusters, *, *, allow
+    p, role:admin, repositories, *, *, allow
+    p, role:admin, projects, *, *, allow
+    p, role:admin, accounts, *, *, allow
+    p, role:admin, gpgkeys, *, *, allow
+    p, role:admin, certificates, *, *, allow
+    
+    ########################
+    # Custom Development Team Role
+    ########################
+    # Can manage applications in dev and staging projects only
+    p, role:dev-team, applications, *, dev/*, allow
+    p, role:dev-team, applications, *, staging/*, allow
+    p, role:dev-team, applications, get, production/*, allow
+    p, role:dev-team, repositories, get, *, allow
+    p, role:dev-team, clusters, get, *, allow
+    p, role:dev-team, projects, get, dev, allow
+    p, role:dev-team, projects, get, staging, allow
+    
+    ########################
+    # Production Operations Role
+    ########################
+    # Full access to production, read access to others
+    p, role:prod-ops, applications, *, production/*, allow
+    p, role:prod-ops, applications, get, */*, allow
+    p, role:prod-ops, repositories, *, *, allow
+    p, role:prod-ops, clusters, *, *, allow
+    p, role:prod-ops, projects, *, production, allow
+    p, role:prod-ops, projects, get, *, allow
+    
+    ########################
+    # Security Auditor Role
+    ########################
+    # Read-only access to everything for auditing
+    p, role:security-auditor, applications, get, */*, allow
+    p, role:security-auditor, repositories, get, *, allow
+    p, role:security-auditor, clusters, get, *, allow
+    p, role:security-auditor, projects, get, *, allow
+    p, role:security-auditor, accounts, get, *, allow
+    p, role:security-auditor, certificates, get, *, allow
+    
+    ########################
+    # Platform Team Role
+    ########################
+    # Can manage infrastructure and shared resources
+    p, role:platform-team, applications, *, shared/*, allow
+    p, role:platform-team, applications, get, */*, allow
+    p, role:platform-team, repositories, *, *, allow
+    p, role:platform-team, clusters, *, *, allow
+    p, role:platform-team, projects, *, shared, allow
+    p, role:platform-team, projects, get, *, allow
+    
+    ########################
+    # Environment-Specific Roles
+    ########################
+    # Development environment only
+    p, role:dev-only, applications, *, dev/*, allow
+    p, role:dev-only, repositories, get, *, allow
+    p, role:dev-only, clusters, get, *, allow
+    p, role:dev-only, projects, get, dev, allow
+    
+    # Staging environment only
+    p, role:staging-only, applications, *, staging/*, allow
+    p, role:staging-only, repositories, get, *, allow
+    p, role:staging-only, clusters, get, *, allow
+    p, role:staging-only, projects, get, staging, allow
+    
+    ########################
+    # Application-Specific Access
+    ########################
+    # Allow specific user access to specific applications
+    p, alice@company.com, applications, *, */webapp-*, allow
+    p, bob@company.com, applications, *, */api-*, allow
+    
+    ########################
+    # Group Mappings
+    ########################
+    # GitHub org/team mappings
+    g, YOUR_GITHUB_ORG:argocd-admins, role:admin
+    g, YOUR_GITHUB_ORG:dev-team, role:dev-team
+    g, YOUR_GITHUB_ORG:prod-ops, role:prod-ops
+    g, YOUR_GITHUB_ORG:security-team, role:security-auditor
+    g, YOUR_GITHUB_ORG:platform-team, role:platform-team
+    
+    # Email-based mappings for local users
+    g, admin@company.com, role:admin
+    g, dev@company.com, role:dev-team
+    g, ops@company.com, role:prod-ops
+    
+  # Enable group claims in OIDC tokens
+  scopes: '[groups, email]' 

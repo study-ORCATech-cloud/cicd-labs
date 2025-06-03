@@ -1,0 +1,53 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: staging
+  namespace: argocd
+spec:
+  description: Staging environment project
+  
+  sourceRepos:
+  - 'https://github.com/*/staging-*'
+  - 'https://github.com/argoproj/argocd-example-apps'
+  
+  destinations:
+  - namespace: 'staging-*'
+    server: https://kubernetes.default.svc
+  
+  clusterResourceWhitelist:
+  - group: ''
+    kind: Namespace
+  
+  namespaceResourceWhitelist:
+  - group: ''
+    kind: ConfigMap
+  - group: ''
+    kind: Secret
+  - group: ''
+    kind: Service
+  - group: apps
+    kind: Deployment
+  - group: apps
+    kind: ReplicaSet
+  - group: ''
+    kind: Pod
+  - group: networking.k8s.io
+    kind: Ingress
+  
+  # Staging-specific restrictions
+  namespaceResourceBlacklist:
+  - group: ''
+    kind: ServiceAccount
+  - group: rbac.authorization.k8s.io
+    kind: Role
+  - group: rbac.authorization.k8s.io
+    kind: RoleBinding
+  
+  roles:
+  - name: staging-admin
+    description: Staging environment administrator
+    policies:
+    - p, proj:staging:staging-admin, applications, *, staging/*, allow
+    groups:
+    - YOUR_GITHUB_ORG:staging-admins
+    - YOUR_GITHUB_ORG:dev-leads 

@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-notifications-webhook-cm
+  namespace: argocd
+data:
+  service.webhook.generic: |
+    url: https://your-webhook-endpoint.com/argocd
+    headers:
+    - name: Authorization
+      value: Bearer $webhook-token
+  
+  template.app-sync-webhook: |
+    webhook:
+      generic:
+        method: POST
+        body: |
+          {
+            "event": "sync",
+            "app": "{{.app.metadata.name}}",
+            "environment": "{{.app.metadata.labels.environment | default \"unknown\"}}",
+            "status": "{{.app.status.operationState.phase}}",
+            "repository": "{{.app.spec.source.repoURL}}",
+            "timestamp": "{{.app.status.operationState.finishedAt}}"
+          } 

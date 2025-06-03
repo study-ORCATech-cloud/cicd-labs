@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cm
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: argocd-cm
+    app.kubernetes.io/part-of: argocd
+data:
+  # ArgoCD Server configuration
+  url: "http://localhost:8080"
+  
+  # Enable insecure mode for localhost testing
+  server.insecure: "true"
+  
+  # OIDC configuration
+  oidc.config: |
+    name: GitHub
+    issuer: https://github.com
+    clientId: YOUR_GITHUB_CLIENT_ID
+    clientSecret: YOUR_GITHUB_CLIENT_SECRET
+    requestedScopes: ["user:email", "read:org"]
+    requestedIDTokenClaims: {"groups": {"essential": true}}
+  
+  # Dex configuration for GitHub
+  dex.config: |
+    logger:
+      level: debug
+    connectors:
+    - type: github
+      id: github
+      name: GitHub
+      config:
+        clientID: YOUR_GITHUB_CLIENT_ID
+        clientSecret: YOUR_GITHUB_CLIENT_SECRET
+        orgs:
+        - name: YOUR_GITHUB_ORG
+          teams:
+          - argocd-admins
+          - argocd-developers
+          - argocd-devops
+          - argocd-viewers 
