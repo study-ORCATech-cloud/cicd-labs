@@ -67,10 +67,10 @@ This document provides the detailed step-by-step instructions for completing Lab
 **7. Access the Deployed Guestbook Application:**
    <br>The guestbook application has a frontend service (`guestbook-ui`) that needs to be accessed.
    <br>a. Use Minikube to easily open this service in your browser:
-      ```bash
-      minikube service guestbook-ui -n guestbook
-      ```
-      *(Note: If the service name in the example app differs slightly, adjust the command. You can find the service name from `kubectl get svc -n guestbook`.)*
+   ```bash
+   minikube service guestbook-ui -n guestbook
+   ```
+   *(Note: If the service name in the example app differs slightly, adjust the command. You can find the service name from `kubectl get svc -n guestbook`.)*
    b. This command should open your default web browser to the guestbook application's URL. You should be able to interact with it (e.g., submit messages).
 
 **8. (Conceptual) The GitOps Flow:**
