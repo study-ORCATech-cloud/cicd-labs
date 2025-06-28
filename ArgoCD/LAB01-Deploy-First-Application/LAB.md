@@ -20,8 +20,8 @@ This document provides the detailed step-by-step instructions for completing Lab
    ```
 
 **3. Create the "guestbook" Application in Argo CD UI:**
-   a. In the Argo CD UI, click the **"+ NEW APP"** button (usually found in the top left).
-   b. You will be presented with the "Create Application" form. Fill it in as follows:
+   <br>a. In the Argo CD UI, click the **"+ NEW APP"** button (usually found in the top left).
+   <br>b. You will be presented with the "Create Application" form. Fill it in as follows:
 
       *   **Application Name:** `guestbook`
       *   **Project Name:** Select `default` from the dropdown (this is the built-in project).
@@ -38,7 +38,7 @@ This document provides the detailed step-by-step instructions for completing Lab
       *   **DESTINATION Cluster URL:** Select `https://kubernetes.default.svc` (this represents the same cluster where Argo CD is running).
       *   **DESTINATION Namespace:** `guestbook`
 
-   c. After filling in these details, click the **"CREATE"** button at the top of the form.
+   <br>c. After filling in these details, click the **"CREATE"** button at the top of the form.
 
 **4. Observe Application Status in Argo CD:**
    a. You should now see a new card for the `guestbook` application on the Argo CD dashboard.
