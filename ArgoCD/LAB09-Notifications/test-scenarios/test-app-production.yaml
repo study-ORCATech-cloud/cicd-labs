@@ -6,8 +6,8 @@ metadata:
   labels:
     environment: production
   annotations:
-    notifications.argoproj.io/subscribe.on-production-issue.slack: ""
-    notifications.argoproj.io/subscribe.on-sync-succeeded.slack: ""
+    notifications.argoproj.io/subscribe.on-production-issue.email: "your-email@gmail.com"
+    notifications.argoproj.io/subscribe.on-sync-succeeded.email: "your-email@gmail.com"
 spec:
   project: default
   source:

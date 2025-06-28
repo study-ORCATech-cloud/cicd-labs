@@ -4,108 +4,97 @@ metadata:
   name: argocd-notifications-cm
   namespace: argocd
 data:
-  # Service configuration
-  service.slack: |
-    token: $slack-webhook-url
+  # Service configuration for email
+  service.email: |
+    host: smtp.gmail.com
+    port: 587
+    from: $email-username
+    username: $email-username
+    password: $email-password
   
-  # Templates
+  # Templates for email notifications
   template.app-sync-succeeded: |
-    slack:
-      title: "✅ Application Synced Successfully"
-      text: |
-        Application **{{.app.metadata.name}}** has been successfully synced to **{{.app.spec.destination.namespace}}**.
+    email:
+      subject: "✅ ArgoCD: {{.app.metadata.name}} - Sync Successful"
+      body: |
+        Hello,
         
-        *Environment:* {{.app.metadata.labels.environment | default "unknown"}}
-        *Repository:* {{.app.spec.source.repoURL}}
-        *Revision:* {{.app.status.sync.revision | truncate 8}}
-        *Health:* {{.app.status.health.status}}
-      color: "good"
-      attachments: |
-        [{
-          "title": "Application Details",
-          "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
-          "color": "good",
-          "fields": [
-            {
-              "title": "Repository",
-              "value": "{{.app.spec.source.repoURL}}",
-              "short": true
-            },
-            {
-              "title": "Revision",
-              "value": "{{.app.status.sync.revision | truncate 8}}",
-              "short": true
-            },
-            {
-              "title": "Environment",
-              "value": "{{.app.metadata.labels.environment | default \"unknown\"}}",
-              "short": true
-            },
-            {
-              "title": "Namespace",
-              "value": "{{.app.spec.destination.namespace}}",
-              "short": true
-            }
-          ]
-        }]
+        Application "{{.app.metadata.name}}" has been successfully synced to "{{.app.spec.destination.namespace}}".
+        
+        Details:
+        - Environment: {{.app.metadata.labels.environment | default "unknown"}}
+        - Repository: {{.app.spec.source.repoURL}}
+        - Revision: {{.app.status.sync.revision | truncate 8}}
+        - Health Status: {{.app.status.health.status}}
+        - Namespace: {{.app.spec.destination.namespace}}
+        
+        View in ArgoCD: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}
+        
+        Best regards,
+        ArgoCD Notifications
   
   template.app-sync-failed: |
-    slack:
-      title: "❌ Application Sync Failed"
-      text: |
-        Application **{{.app.metadata.name}}** failed to sync in **{{.app.spec.destination.namespace}}**.
+    email:
+      subject: "❌ ArgoCD: {{.app.metadata.name}} - Sync Failed"
+      body: |
+        Hello,
         
-        *Environment:* {{.app.metadata.labels.environment | default "unknown"}}
-        *Error:* {{.app.status.operationState.message | truncate 100}}
-        *Repository:* {{.app.spec.source.repoURL}}
-      color: "danger"
-      attachments: |
-        [{
-          "title": "Sync Failure Details",
-          "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
-          "color": "danger",
-          "fields": [
-            {
-              "title": "Error Message",
-              "value": "{{.app.status.operationState.message | truncate 200}}",
-              "short": false
-            },
-            {
-              "title": "Repository",
-              "value": "{{.app.spec.source.repoURL}}",
-              "short": true
-            },
-            {
-              "title": "Environment",
-              "value": "{{.app.metadata.labels.environment | default \"unknown\"}}",
-              "short": true
-            }
-          ]
-        }]
+        Application "{{.app.metadata.name}}" failed to sync in "{{.app.spec.destination.namespace}}".
+        
+        Error Details:
+        - Environment: {{.app.metadata.labels.environment | default "unknown"}}
+        - Repository: {{.app.spec.source.repoURL}}
+        - Error Message: {{.app.status.operationState.message | truncate 200}}
+        
+        Please check the application status and resolve the issue.
+        
+        View in ArgoCD: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}
+        
+        Best regards,
+        ArgoCD Notifications
   
   template.app-health-degraded: |
-    slack:
-      title: "🔴 Application Health Degraded"
-      text: |
-        Application **{{.app.metadata.name}}** health has degraded to **{{.app.status.health.status}}**.
+    email:
+      subject: "🔴 ArgoCD: {{.app.metadata.name}} - Health Degraded"
+      body: |
+        Hello,
         
-        *Environment:* {{.app.metadata.labels.environment | default "unknown"}}
-        *Current Health:* {{.app.status.health.status}}
-        *Message:* {{.app.status.health.message | default "No additional details"}}
-      color: "danger"
+        Application "{{.app.metadata.name}}" health has degraded to "{{.app.status.health.status}}".
+        
+        Details:
+        - Environment: {{.app.metadata.labels.environment | default "unknown"}}
+        - Current Health: {{.app.status.health.status}}
+        - Health Message: {{.app.status.health.message | default "No additional details"}}
+        - Namespace: {{.app.spec.destination.namespace}}
+        
+        Please investigate and resolve the health issue.
+        
+        View in ArgoCD: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}
+        
+        Best regards,
+        ArgoCD Notifications
   
   template.production-alert: |
-    slack:
-      title: "🚨 PRODUCTION ALERT"
-      text: |
-        **PRODUCTION ISSUE DETECTED**
+    email:
+      subject: "🚨 URGENT: Production Issue - {{.app.metadata.name}}"
+      body: |
+        PRODUCTION ALERT - IMMEDIATE ATTENTION REQUIRED
         
-        Application: **{{.app.metadata.name}}**
-        Environment: **PRODUCTION**
+        Application: {{.app.metadata.name}}
+        Environment: PRODUCTION
         Issue: {{.app.status.health.status}} / {{.app.status.sync.status}}
+        Namespace: {{.app.spec.destination.namespace}}
         
-        <!channel> - Immediate attention required!
-      color: "danger"
+        Error Details:
+        {{.app.status.operationState.message | default "Check application health status"}}
+        
+        This is a production environment issue that requires immediate attention.
+        
+        View in ArgoCD: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}
+        
+        Emergency Contact: Follow your incident response procedures
+        
+        ArgoCD Notifications
   
   # Triggers
   trigger.on-sync-failed: |

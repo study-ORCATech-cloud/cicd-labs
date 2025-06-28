@@ -6,9 +6,9 @@ metadata:
   labels:
     environment: staging
   annotations:
-    notifications.argoproj.io/subscribe.on-sync-succeeded.slack: ""
-    notifications.argoproj.io/subscribe.on-sync-failed.slack: ""
-    notifications.argoproj.io/subscribe.on-health-degraded.slack: ""
+    notifications.argoproj.io/subscribe.on-sync-succeeded.email: "your-email@gmail.com"
+    notifications.argoproj.io/subscribe.on-sync-failed.email: "your-email@gmail.com"
+    notifications.argoproj.io/subscribe.on-health-degraded.email: "your-email@gmail.com"
 spec:
   project: default
   source:

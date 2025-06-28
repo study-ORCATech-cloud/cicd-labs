@@ -14,6 +14,7 @@ kubectl delete -f notification-configs/master-notifications-config.yaml --ignore
 
 # Remove secrets
 echo "3. Removing secrets..."
+kubectl delete -f secrets/email-credentials-secret.yaml --ignore-not-found=true
 kubectl delete -f secrets/slack-webhook-secret.yaml --ignore-not-found=true
 
 # Remove controller
