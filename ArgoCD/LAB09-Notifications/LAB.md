@@ -88,149 +88,51 @@ We will start by setting up the notifications controller, then configure email n
 > - **Yahoo**: Use App Passwords (Yahoo Account → Security → App passwords)
 > - **Custom SMTP**: Use your regular email credentials and update SMTP settings in master config
 
-### Phase 3: Copy and Configure Notification Templates
+### Phase 3: Deploy Master Notifications Configuration
 
-**9. Copy Sync Event Templates:**
-   ```bash
-   cp notification-configs/templates/app-sync-templates.yaml ./
-   ```
-
-**10. Review Sync Templates:**
-   ```bash
-   cat notification-configs/templates/app-sync-templates.yaml
-   ```
-
-**11. Copy Health Event Templates:**
-   ```bash
-   cp notification-configs/templates/app-health-templates.yaml ./
-   ```
-
-**12. Review Health Templates:**
-   ```bash
-   cat notification-configs/templates/app-health-templates.yaml
-   ```
-
-**13. Copy Environment-Specific Templates:**
-   ```bash
-   cp notification-configs/templates/environment-templates.yaml ./
-   ```
-
-**14. Review Environment Templates:**
-   ```bash
-   cat notification-configs/templates/environment-templates.yaml
-   ```
-
-**15. Apply Template Configurations:**
-   ```bash
-   # Apply all notification templates
-   kubectl apply -f notification-configs/templates/app-sync-templates.yaml
-   kubectl apply -f notification-configs/templates/app-health-templates.yaml
-   kubectl apply -f notification-configs/templates/environment-templates.yaml
-   ```
-
-**16. Verify Template ConfigMaps:**
-   ```bash
-   # Check that template ConfigMaps are created
-   kubectl get configmap -n argocd | grep notifications
-   kubectl get configmap argocd-notifications-cm -n argocd
-   kubectl get configmap argocd-notifications-health-cm -n argocd
-   kubectl get configmap argocd-notifications-env-cm -n argocd
-   ```
-
-### Phase 4: Configure Notification Triggers
-
-**17. Copy Production Triggers:**
-   ```bash
-   cp notification-configs/triggers/production-triggers.yaml ./
-   ```
-
-**18. Review Production Triggers:**
-   ```bash
-   cat notification-configs/triggers/production-triggers.yaml
-   ```
-
-**19. Copy Staging Triggers:**
-   ```bash
-   cp notification-configs/triggers/staging-triggers.yaml ./
-   ```
-
-**20. Review Staging Triggers:**
-   ```bash
-   cat notification-configs/triggers/staging-triggers.yaml
-   ```
-
-**21. Copy Global Triggers:**
-   ```bash
-   cp notification-configs/triggers/global-triggers.yaml ./
-   ```
-
-**22. Review Global Triggers:**
-   ```bash
-   cat notification-configs/triggers/global-triggers.yaml
-   ```
-
-**23. Apply Trigger Configurations:**
-   ```bash
-   # Apply all notification triggers
-   kubectl apply -f notification-configs/triggers/production-triggers.yaml
-   kubectl apply -f notification-configs/triggers/staging-triggers.yaml
-   kubectl apply -f notification-configs/triggers/global-triggers.yaml
-   ```
-
-**24. Verify Trigger ConfigMaps:**
-   ```bash
-   # Check that trigger ConfigMaps are created
-   kubectl get configmap -n argocd | grep triggers
-   kubectl get configmap argocd-notifications-production-triggers -n argocd
-   kubectl get configmap argocd-notifications-staging-triggers -n argocd
-   kubectl get configmap argocd-notifications-global-triggers -n argocd
-   ```
-
-### Phase 5: Deploy Master Notifications Configuration
-
-**25. Copy Master Configuration:**
+**9. Copy Master Configuration:**
    ```bash
    cp notification-configs/master-notifications-config.yaml ./
    ```
 
-**26. Review Master Configuration:**
+**10. Review Master Configuration:**
    ```bash
    cat notification-configs/master-notifications-config.yaml
    ```
 
-**27. Apply Master Configuration:**
+**11. Apply Master Configuration:**
    ```bash
    kubectl apply -f notification-configs/master-notifications-config.yaml
    ```
 
-**28. Verify Configuration:**
+**12. Verify Configuration:**
    ```bash
    kubectl get configmap argocd-notifications-cm -n argocd -o yaml
    ```
 
-### Phase 6: Configure Additional Notifiers (Optional)
+### Phase 4: Configure Additional Notifiers (Optional)
 
-**29. Copy Slack Notifier:**
+**13. Copy Slack Notifier:**
    ```bash
    cp notification-configs/notifiers/slack-notifier.yaml ./
    ```
 
-**30. Copy Email Notifier:**
+**14. Copy Email Notifier:**
    ```bash
    cp notification-configs/notifiers/email-notifier.yaml ./
    ```
 
-**31. Copy Webhook Notifier:**
+**15. Copy Webhook Notifier:**
    ```bash
    cp notification-configs/notifiers/webhook-notifier.yaml ./
    ```
 
-**32. Copy Teams Notifier:**
+**16. Copy Teams Notifier:**
    ```bash
    cp notification-configs/notifiers/teams-notifier.yaml ./
    ```
 
-**33. Review Additional Notifiers:**
+**17. Review Additional Notifiers:**
    ```bash
    cat notification-configs/notifiers/slack-notifier.yaml
    cat notification-configs/notifiers/email-notifier.yaml
@@ -238,16 +140,16 @@ We will start by setting up the notifications controller, then configure email n
    cat notification-configs/notifiers/teams-notifier.yaml
    ```
 
-### Phase 7: Deploy Test Applications
+### Phase 5: Deploy Test Applications
 
-**34. Copy Test Applications:**
+**18. Copy Test Applications:**
    ```bash
    cp test-scenarios/test-app-healthy.yaml ./
    cp test-scenarios/test-app-sync-failed.yaml ./
    cp test-scenarios/test-app-production.yaml ./
    ```
 
-**35. Review Test Applications:**
+**19. Review Test Applications:**
    ```bash
    cat test-scenarios/test-app-healthy.yaml
    cat test-scenarios/test-app-sync-failed.yaml
@@ -268,7 +170,7 @@ We will start by setting up the notifications controller, then configure email n
    > kubectl create namespace test-notifications-fail
    > ```
 
-**36. Update Email Addresses in Test Applications:**
+**20. Update Email Addresses in Test Applications:**
    ```bash
    # Replace the placeholder email with your actual email address
    YOUR_EMAIL="your-actual-email@gmail.com"
@@ -282,13 +184,13 @@ We will start by setting up the notifications controller, then configure email n
    grep "notifications.argoproj.io" test-scenarios/test-app-healthy.yaml
    ```
 
-**37. Deploy Test Applications:**
+**21. Deploy Test Applications:**
    ```bash
    kubectl apply -f test-scenarios/test-app-healthy.yaml
    kubectl apply -f test-scenarios/test-app-production.yaml
    ```
 
-**38. Verify Test Applications:**
+**22. Verify Test Applications:**
    ```bash
    kubectl get applications -n argocd | grep test-notifications
    
@@ -300,23 +202,23 @@ We will start by setting up the notifications controller, then configure email n
    kubectl get applications -n argocd test-notifications-production -o wide
    ```
 
-### Phase 8: Test Notification Scenarios
+### Phase 6: Test Notification Scenarios
 
-**39. Use Setup Script (Optional):**
+**23. Use Setup Script (Optional):**
    ```bash
    cp scripts/setup-notifications.sh ./
    chmod +x scripts/setup-notifications.sh
    ./scripts/setup-notifications.sh
    ```
 
-**40. Use Test Script:**
+**24. Use Test Script:**
    ```bash
    cp scripts/test-notifications.sh ./
    chmod +x scripts/test-notifications.sh
    ./scripts/test-notifications.sh
    ```
 
-**41. Monitor Notifications:**
+**25. Monitor Notifications:**
    ```bash
    # Watch controller logs for notification delivery
    kubectl logs -n argocd deployment/argocd-notifications-controller -f
@@ -328,7 +230,7 @@ We will start by setting up the notifications controller, then configure email n
    kubectl patch app test-notifications-production -n argocd --type merge -p '{"operation":{"sync":{}}}'
    ```
 
-**42. Test Failure Scenarios:**
+**26. Test Failure Scenarios:**
    ```bash
    # Deploy failing application
    kubectl apply -f test-scenarios/test-app-sync-failed.yaml
@@ -339,9 +241,9 @@ We will start by setting up the notifications controller, then configure email n
    # Check your email inbox for sync failure notifications
    ```
 
-### Phase 9: Advanced Testing and Validation
+### Phase 7: Advanced Testing and Validation
 
-**43. Test Environment-Based Routing:**
+**27. Test Environment-Based Routing:**
    ```bash
    # Check production alerts (should trigger urgent emails)
    kubectl get app test-notifications-production -n argocd -o yaml | grep -A 10 status
@@ -354,7 +256,7 @@ We will start by setting up the notifications controller, then configure email n
    kubectl get all -n test-notifications
    ```
 
-**44. Validate Notification Delivery:**
+**28. Validate Notification Delivery:**
    ```bash
    # Check controller metrics
    kubectl port-forward -n argocd svc/argocd-notifications-controller-metrics 9001:9001 &
@@ -364,7 +266,7 @@ We will start by setting up the notifications controller, then configure email n
    kubectl logs -n argocd deployment/argocd-notifications-controller | grep -i email
    ```
 
-**45. Test Manual Triggers:**
+**29. Test Manual Triggers:**
    ```bash
    # Add manual notification annotation for email
    kubectl annotate app test-notifications-healthy -n argocd \
@@ -512,14 +414,14 @@ If you have access to a Slack workspace and want to add Slack notifications in a
 
 ## 🧹 Cleanup
 
-**46. Use Cleanup Script:**
+**30. Use Cleanup Script:**
    ```bash
    cp scripts/cleanup-notifications.sh ./
    chmod +x scripts/cleanup-notifications.sh
    ./scripts/cleanup-notifications.sh
    ```
 
-**47. Manual Cleanup (Alternative):**
+**31. Manual Cleanup (Alternative):**
    ```bash
    # Remove test applications
    kubectl delete -f test-scenarios/ --ignore-not-found=true
@@ -541,7 +443,7 @@ If you have access to a Slack workspace and want to add Slack notifications in a
    kubectl delete namespace test-notifications test-notifications-fail test-notifications-prod --ignore-not-found=true
    ```
 
-**48. Verify Cleanup:**
+**32. Verify Cleanup:**
    ```bash
    kubectl get pods -n argocd | grep notifications
    kubectl get applications -n argocd | grep test-notifications

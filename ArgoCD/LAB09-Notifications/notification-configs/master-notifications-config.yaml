@@ -24,7 +24,7 @@ data:
         Details:
         - Environment: {{.app.metadata.labels.environment | default "unknown"}}
         - Repository: {{.app.spec.source.repoURL}}
-        - Revision: {{.app.status.sync.revision | truncate 8}}
+        - Revision: {{.app.status.sync.revision | trunc 8}}
         - Health Status: {{.app.status.health.status}}
         - Namespace: {{.app.spec.destination.namespace}}
         
@@ -44,9 +44,28 @@ data:
         Error Details:
         - Environment: {{.app.metadata.labels.environment | default "unknown"}}
         - Repository: {{.app.spec.source.repoURL}}
-        - Error Message: {{.app.status.operationState.message | truncate 200}}
+        - Error Message: {{.app.status.operationState.message | trunc 200}}
         
         Please check the application status and resolve the issue.
+        
+        View in ArgoCD: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}
+        
+        Best regards,
+        ArgoCD Notifications
+  
+  template.app-out-of-sync: |
+    email:
+      subject: "⚠️ ArgoCD: {{.app.metadata.name}} - Out of Sync"
+      body: |
+        Hello,
+        
+        Application "{{.app.metadata.name}}" is out of sync in "{{.app.spec.destination.namespace}}".
+        
+        Details:
+        - Environment: {{.app.metadata.labels.environment | default "unknown"}}
+        - Repository: {{.app.spec.source.repoURL}}
+        
+        Please review the application's sync status.
         
         View in ArgoCD: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}
         
@@ -68,6 +87,23 @@ data:
         - Namespace: {{.app.spec.destination.namespace}}
         
         Please investigate and resolve the health issue.
+        
+        View in ArgoCD: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}
+        
+        Best regards,
+        ArgoCD Notifications
+  
+  template.app-health-recovered: |
+    email:
+      subject: "✅ ArgoCD: {{.app.metadata.name}} - Health Recovered"
+      body: |
+        Hello,
+        
+        Application "{{.app.metadata.name}}" has recovered and is now "{{.app.status.health.status}}".
+        
+        Details:
+        - Environment: {{.app.metadata.labels.environment | default "unknown"}}
+        - Health Status: {{.app.status.health.status}}
         
         View in ArgoCD: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}
         
@@ -96,6 +132,23 @@ data:
         
         ArgoCD Notifications
   
+  template.staging-notification: |
+    email:
+      subject: "📋 Staging Update: {{.app.metadata.name}}"
+      body: |
+        Hello,
+        
+        Staging application "{{.app.metadata.name}}" has a status update.
+        
+        Details:
+        - Health: {{.app.status.health.status}}
+        - Sync: {{.app.status.sync.status}}
+        
+        View in ArgoCD: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}
+        
+        Best regards,
+        ArgoCD Notifications
+  
   # Triggers
   trigger.on-sync-failed: |
     - when: app.status.operationState.phase in ['Error', 'Failed']
@@ -107,6 +160,45 @@ data:
   
   trigger.on-health-degraded: |
     - when: app.status.health.status != 'Healthy'
+      send: [app-health-degraded]
+  
+  # Global out-of-sync trigger
+  trigger.on-out-of-sync: |
+    - when: app.status.sync.status != 'Synced'
+      send: [app-out-of-sync]
+  
+  # Global health recovery trigger
+  trigger.on-health-recovered: |
+    - when: app.status.health.status == 'Healthy' and app.status.health.previousStatus != 'Healthy'
+      send: [app-health-recovered]
+  
+  # Production sync failure trigger
+  trigger.on-sync-failed-production: |
+    - when: app.status.operationState.phase in ['Error', 'Failed'] and app.metadata.labels.environment == 'production'
+      send: [production-alert]
+  
+  # Production health degradation trigger
+  trigger.on-health-degraded-production: |
+    - when: app.status.health.status != 'Healthy' and app.metadata.labels.environment == 'production'
+      send: [production-alert]
+  
+  # Production sync success (for important deployments)
+  trigger.on-sync-succeeded-production: |
+    - when: app.status.operationState.phase == 'Succeeded' and app.metadata.labels.environment == 'production'
+      send: [app-sync-succeeded]
+  
+  # Staging sync events
+  trigger.on-sync-failed-staging: |
+    - when: app.status.operationState.phase in ['Error', 'Failed'] and app.metadata.labels.environment == 'staging'
+      send: [app-sync-failed]
+  
+  trigger.on-sync-succeeded-staging: |
+    - when: app.status.operationState.phase == 'Succeeded' and app.metadata.labels.environment == 'staging'
+      send: [staging-notification]
+  
+  # Staging health events
+  trigger.on-health-degraded-staging: |
+    - when: app.status.health.status != 'Healthy' and app.metadata.labels.environment == 'staging'
       send: [app-health-degraded]
   
   trigger.on-production-issue: |
