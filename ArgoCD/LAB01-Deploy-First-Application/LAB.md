@@ -62,7 +62,7 @@ This document provides the detailed step-by-step instructions for completing Lab
    ```bash
    kubectl get all -n guestbook
    ```
-   <br>You should see Pods, Services, and Deployments (or StatefulSets depending on the exact example version) related to the guestbook application (e.g., `guestbook-ui`, `redis-master`, `redis-slave`). Wait for the Pods to be in the `Running` state.
+   You should see Pods, Services, and Deployments (or StatefulSets depending on the exact example version) related to the guestbook application (e.g., `guestbook-ui`, `redis-master`, `redis-slave`). Wait for the Pods to be in the `Running` state.
 
 **7. Access the Deployed Guestbook Application:**
    <br>The guestbook application has a frontend service (`guestbook-ui`) that needs to be accessed.
@@ -71,7 +71,7 @@ This document provides the detailed step-by-step instructions for completing Lab
       minikube service guestbook-ui -n guestbook
       ```
       *(Note: If the service name in the example app differs slightly, adjust the command. You can find the service name from `kubectl get svc -n guestbook`.)*
-   <br>b. This command should open your default web browser to the guestbook application's URL. You should be able to interact with it (e.g., submit messages).
+   b. This command should open your default web browser to the guestbook application's URL. You should be able to interact with it (e.g., submit messages).
 
 **8. (Conceptual) The GitOps Flow:**
    <br>At this point, you've deployed an application declaratively from Git. If this were your own application hosted in your own Git repository:
@@ -109,7 +109,7 @@ It's important to clean up resources to keep your Minikube environment tidy.
     ```bash
     kubectl get all -n guestbook
     ```
-    <br>You should see "No resources found." or very few remaining (sometimes finalizers take a moment).
+    You should see "No resources found." or very few remaining (sometimes finalizers take a moment).
     <br>Now, delete the namespace:
     ```bash
     kubectl delete namespace guestbook
@@ -120,7 +120,7 @@ It's important to clean up resources to keep your Minikube environment tidy.
     ```bash
     minikube stop
     ```
-    <br>Remember to also stop the `kubectl port-forward` command for the Argo CD UI if it's still running in another terminal.
+    Remember to also stop the `kubectl port-forward` command for the Argo CD UI if it's still running in another terminal.
 
 ---
 
