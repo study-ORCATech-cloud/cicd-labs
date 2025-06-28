@@ -11,13 +11,13 @@ We will start by creating a repository structure and copying the sample applicat
 ### Phase 1: Copy Lab Materials and Create Repository Structure
 
 **1. Prepare Your GitHub Repository:**
-   a. Create a new public GitHub repository named `cicd-gitops-demo` (or reuse existing repository from previous labs)
-   b. Clone the repository locally:
+   * Create a new public GitHub repository named `cicd-gitops-demo` (or reuse existing repository from previous labs)
+   * Clone the repository locally:
       ```bash
       git clone https://github.com/YOUR_USERNAME/cicd-gitops-demo.git
       cd cicd-gitops-demo
       ```
-   c. Create the complete directory structure:
+   * Create the complete directory structure:
       ```bash
       mkdir -p app/tests
       mkdir -p .github/workflows
@@ -26,7 +26,7 @@ We will start by creating a repository structure and copying the sample applicat
       ```
 
 **2. Copy Sample Python Flask Application:**
-   a. Copy the main application files from the lab materials:
+   * Copy the main application files from the lab materials:
       ```bash
       # Copy the Flask application
       cp ../path-to-cicd-labs/ArgoCD/LAB08-CI-Promote-To-ArgoCD/app/main.py ./app/main.py
@@ -37,7 +37,7 @@ We will start by creating a repository structure and copying the sample applicat
       # Copy Dockerfile
       cp ../path-to-cicd-labs/ArgoCD/LAB08-CI-Promote-To-ArgoCD/app/Dockerfile ./app/Dockerfile
       ```
-   b. Examine the Flask application structure:
+   * Examine the Flask application structure:
       ```bash
       # Review the main application
       cat app/main.py
@@ -48,10 +48,10 @@ We will start by creating a repository structure and copying the sample applicat
       # Review the Dockerfile
       cat app/Dockerfile
       ```
-   c. Notice the application provides multiple endpoints: `/`, `/health`, and `/version`
+   * Notice the application provides multiple endpoints: `/`, `/health`, and `/version`
 
 **3. Copy Unit Tests:**
-   a. Copy the test files from the lab materials:
+   * Copy the test files from the lab materials:
       ```bash
       # Copy test dependencies
       cp ../path-to-cicd-labs/ArgoCD/LAB08-CI-Promote-To-ArgoCD/app/tests/test_requirements.txt ./app/tests/test_requirements.txt
@@ -59,7 +59,7 @@ We will start by creating a repository structure and copying the sample applicat
       # Copy unit tests
       cp ../path-to-cicd-labs/ArgoCD/LAB08-CI-Promote-To-ArgoCD/app/tests/test_app.py ./app/tests/test_app.py
       ```
-   b. Review the test structure:
+   * Review the test structure:
       ```bash
       # Check test dependencies
       cat app/tests/test_requirements.txt
@@ -67,54 +67,54 @@ We will start by creating a repository structure and copying the sample applicat
       # Review the unit tests
       cat app/tests/test_app.py
       ```
-   c. The tests cover all endpoints and environment variable handling
+   * The tests cover all endpoints and environment variable handling
 
 ### Phase 2: Copy GitOps Repository Structure
 
 **4. Copy Staging Environment Configuration:**
-   a. Copy staging deployment:
+   * Copy staging deployment:
       ```bash
       cp gitops-repo/environments/staging/deployment.yaml ./
       ```
    
-   b. Review staging deployment:
+   * Review staging deployment:
       ```bash
       cat gitops-repo/environments/staging/deployment.yaml
       ```
 
-   c. Copy staging kustomization:
+   * Copy staging kustomization:
       ```bash
       cp gitops-repo/environments/staging/kustomization.yaml ./
       ```
    
-   d. Review staging kustomization:
+   * Review staging kustomization:
       ```bash
       cat gitops-repo/environments/staging/kustomization.yaml
       ```
 
 **5. Copy Production Environment Configuration:**
-   a. Copy production deployment:
+   * Copy production deployment:
       ```bash
       cp gitops-repo/environments/production/deployment.yaml ./
       ```
    
-   b. Review production deployment:
+   * Review production deployment:
       ```bash
       cat gitops-repo/environments/production/deployment.yaml
       ```
 
-   c. Copy production kustomization:
+   * Copy production kustomization:
       ```bash
       cp gitops-repo/environments/production/kustomization.yaml ./
       ```
    
-   d. Review production kustomization:
+   * Review production kustomization:
       ```bash
       cat gitops-repo/environments/production/kustomization.yaml
       ```
 
 **6. Update Docker Hub Username:**
-   a. Replace `YOUR_DOCKERHUB_USERNAME` with your actual Docker Hub username:
+   * Replace `YOUR_DOCKERHUB_USERNAME` with your actual Docker Hub username:
       ```bash
       # Replace with your actual Docker Hub username
       DOCKERHUB_USERNAME="your-dockerhub-username"
@@ -188,19 +188,19 @@ We will start by creating a repository structure and copying the sample applicat
 ### Phase 5: Copy Helper Scripts
 
 **18. Copy Helper Scripts from Lab Materials:**
-   a. Copy the image tag update script:
+   * Copy the image tag update script:
       ```bash
       # Copy the image tag update script
       cp ../path-to-cicd-labs/ArgoCD/LAB08-CI-Promote-To-ArgoCD/scripts/update-image-tag.sh ./scripts/update-image-tag.sh
       chmod +x scripts/update-image-tag.sh
       ```
-   b. Copy the environment promotion script:
+   * Copy the environment promotion script:
       ```bash
       # Copy the environment promotion script
       cp ../path-to-cicd-labs/ArgoCD/LAB08-CI-Promote-To-ArgoCD/scripts/promote-environment.sh ./scripts/promote-environment.sh
       chmod +x scripts/promote-environment.sh
       ```
-   c. Review the helper scripts:
+   * Review the helper scripts:
       ```bash
       # Review the update script
       cat scripts/update-image-tag.sh
@@ -210,7 +210,7 @@ We will start by creating a repository structure and copying the sample applicat
       ```
 
 **19. Test Local Application (Optional):**
-   a. Test the Flask application locally:
+   * Test the Flask application locally:
       ```bash
       cd app
       pip install -r requirements.txt
@@ -222,7 +222,7 @@ We will start by creating a repository structure and copying the sample applicat
       pkill -f python
       cd ..
       ```
-   b. Run the unit tests:
+   * Run the unit tests:
       ```bash
       cd app
       pip install -r tests/test_requirements.txt
@@ -240,11 +240,11 @@ We will start by creating a repository structure and copying the sample applicat
    ```
 
 **21. Set Up GitHub Secrets:**
-   a. Go to your GitHub repository settings → Secrets and variables → Actions
-   b. Add the following repository secrets:
+   * Go to your GitHub repository settings → Secrets and variables → Actions
+   * Add the following repository secrets:
       - `DOCKER_HUB_USERNAME`: Your Docker Hub username
       - `DOCKER_HUB_TOKEN`: Your Docker Hub access token
-   c. To create a Docker Hub access token:
+   * To create a Docker Hub access token:
       - Go to Docker Hub → Account Settings → Security
       - Click "New Access Token"
       - Give it a descriptive name like "GitHub Actions"
@@ -257,45 +257,45 @@ We will start by creating a repository structure and copying the sample applicat
    ```
 
 **23. Verify ArgoCD Applications:**
-   a. Open ArgoCD UI
-   b. You should see two applications: `cicd-demo-staging` and `cicd-demo-production`
-   c. The staging application should auto-sync
-   d. The production application should be manual sync
+   * Open ArgoCD UI
+   * You should see two applications: `cicd-demo-staging` and `cicd-demo-production`
+   * The staging application should auto-sync
+   * The production application should be manual sync
 
 ### Phase 7: Test Complete CI/CD Pipeline
 
 **24. Trigger Initial CI/CD Pipeline:**
-   a. Make a small change to the application:
+   * Make a small change to the application:
       ```bash
       sed -i 's/Hello from CI\/CD GitOps Demo!/Hello from Automated CI\/CD Pipeline!/' app/main.py
       git add app/main.py
       git commit -m "Update welcome message"
       git push origin main
       ```
-   b. This will trigger the CI build workflow
-   c. Watch the workflow in GitHub Actions tab
+   * This will trigger the CI build workflow
+   * Watch the workflow in GitHub Actions tab
 
 **25. Monitor Staging Deployment:**
-   a. After CI completes, the staging promotion workflow should run
-   b. Check ArgoCD UI for staging application sync
-   c. Test the staging application:
+   * After CI completes, the staging promotion workflow should run
+   * Check ArgoCD UI for staging application sync
+   * Test the staging application:
       ```bash
       minikube ip  # Get Minikube IP
       curl http://<MINIKUBE_IP>:30100/
       ```
 
 **26. Promote to Production:**
-   a. In GitHub, go to Actions tab
-   b. Run the "Promote to Production" workflow manually
-   c. Enter the version tag from staging (check staging kustomization.yaml)
-   d. Type "promote" to confirm
-   e. Run the workflow
+   * In GitHub, go to Actions tab
+   * Run the "Promote to Production" workflow manually
+   * Enter the version tag from staging (check staging kustomization.yaml)
+   * Type "promote" to confirm
+   * Run the workflow
 
 **27. Manually Sync Production:**
-   a. In ArgoCD UI, the production application should show "OutOfSync"
-   b. Review the changes
-   c. Manually click "SYNC" to deploy to production
-   d. Test the production application:
+   * In ArgoCD UI, the production application should show "OutOfSync"
+   * Review the changes
+   * Manually click "SYNC" to deploy to production
+   * Test the production application:
       ```bash
       curl http://<MINIKUBE_IP>:30200/
       ```
@@ -303,31 +303,31 @@ We will start by creating a repository structure and copying the sample applicat
 ### Phase 8: Advanced Testing and Validation
 
 **28. Test Rollback Scenario:**
-   a. Make a breaking change to the application:
+   * Make a breaking change to the application:
       ```bash
       echo "import invalid_module" >> app/main.py
       git add app/main.py
       git commit -m "Introduce breaking change"
       git push origin main
       ```
-   b. The CI pipeline should fail at the test stage
-   c. Verify that staging is not updated with the broken version
+   * The CI pipeline should fail at the test stage
+   * Verify that staging is not updated with the broken version
 
 **29. Test Manual Promotion Override:**
-   a. Fix the breaking change:
+   * Fix the breaking change:
       ```bash
       git revert HEAD
       git push origin main
       ```
-   b. Wait for CI to complete and staging to be updated
-   c. Use the promotion script locally:
+   * Wait for CI to complete and staging to be updated
+   * Use the promotion script locally:
       ```bash
       ./scripts/promote-environment.sh
       ```
-   d. Commit and push the changes
+   * Commit and push the changes
 
 **30. Monitor and Validate Complete Pipeline:**
-   a. Check application versions across environments:
+   * Check application versions across environments:
       ```bash
       echo "=== Staging Version ==="
       curl http://<MINIKUBE_IP>:30100/version
@@ -335,8 +335,8 @@ We will start by creating a repository structure and copying the sample applicat
       echo "=== Production Version ==="
       curl http://<MINIKUBE_IP>:30200/version
       ```
-   b. Verify Docker Hub contains the built images
-   c. Confirm ArgoCD shows correct sync status for both applications
+   * Verify Docker Hub contains the built images
+   * Confirm ArgoCD shows correct sync status for both applications
 
 ---
 
@@ -362,10 +362,10 @@ We will start by creating a repository structure and copying the sample applicat
 ## 🧹 Cleanup
 
 **31. Delete ArgoCD Applications:**
-   a. In the ArgoCD UI, delete both applications:
+   * In the ArgoCD UI, delete both applications:
       - Click on `cicd-demo-staging` → DELETE → Check "Delete resources" → Confirm
       - Click on `cicd-demo-production` → DELETE → Check "Delete resources" → Confirm
-   b. Alternatively, use kubectl:
+   * Alternatively, use kubectl:
       ```bash
       kubectl delete application cicd-demo-staging -n argocd
       kubectl delete application cicd-demo-production -n argocd
@@ -378,9 +378,9 @@ We will start by creating a repository structure and copying the sample applicat
    ```
 
 **33. Disable GitHub Actions Workflows:**
-   a. In GitHub repository, go to Actions tab
-   b. Click on each workflow and disable them to prevent accidental runs
-   c. Or delete the workflow files:
+   * In GitHub repository, go to Actions tab
+   * Click on each workflow and disable them to prevent accidental runs
+   * Or delete the workflow files:
       ```bash
       git rm .github/workflows/*.yml
       git commit -m "Remove CI/CD workflows"
@@ -388,11 +388,11 @@ We will start by creating a repository structure and copying the sample applicat
       ```
 
 **34. Clean Up Docker Images (Optional):**
-   a. Remove local Docker images:
+   * Remove local Docker images:
       ```bash
       docker rmi $(docker images "*/cicd-demo" -q) 2>/dev/null || true
       ```
-   b. Remove images from Docker Hub (manual process via Docker Hub UI)
+   * Remove images from Docker Hub (manual process via Docker Hub UI)
 
 **35. Clean Up Git Repository (Optional):**
    ```bash

@@ -16,22 +16,22 @@ We will start by setting up the notifications controller, then configure multipl
    ```
 
 **2. Copy ArgoCD Notifications Controller Configuration:**
-   a. Copy the notifications controller deployment:
+   * Copy the notifications controller deployment:
       ```bash
       cp notification-controller/argocd-notifications-controller.yaml ./
       ```
    
-   b. Review the controller configuration:
+   * Review the controller configuration:
       ```bash
       cat notification-controller/argocd-notifications-controller.yaml
       ```
 
-   c. Copy RBAC for notifications controller:
+   * Copy RBAC for notifications controller:
       ```bash
       cp notification-controller/argocd-notifications-rbac.yaml ./
       ```
    
-   d. Review the RBAC configuration:
+   * Review the RBAC configuration:
       ```bash
       cat notification-controller/argocd-notifications-rbac.yaml
       ```
@@ -51,10 +51,10 @@ We will start by setting up the notifications controller, then configure multipl
 ### Phase 2: Set Up Slack Integration
 
 **5. Create Slack Webhook (Prerequisites):**
-   a. Go to your Slack workspace
-   b. Navigate to Apps → Incoming Webhooks
-   c. Click "Add to Slack" and select a channel (e.g., #argocd-alerts)
-   d. Copy the webhook URL (format: https://hooks.slack.com/services/...)
+   * Go to your Slack workspace
+   * Navigate to Apps → Incoming Webhooks
+   * Click "Add to Slack" and select a channel (e.g., #argocd-alerts)
+   * Copy the webhook URL (format: https://hooks.slack.com/services/...)
 
 **6. Copy and Configure Slack Webhook Secret:**
    ```bash

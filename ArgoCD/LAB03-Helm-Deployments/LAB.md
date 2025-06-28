@@ -17,46 +17,46 @@ We will use the `bitnami/nginx` public Helm chart as our example.
    - You can browse available charts and their documentation on [Artifact Hub](https://artifacthub.io/)
 
 **2. Prepare Your Git Repository:**
-   a. Use your existing Git repository from LAB02, or create a new public repository named `my-helm-app`
-   b. In your local clone of the repository, create a `helm-values` directory:
+   * Use your existing Git repository from LAB02, or create a new public repository named `my-helm-app`
+   * In your local clone of the repository, create a `helm-values` directory:
       ```bash
       mkdir helm-values
       cd helm-values
       ```
 
 **3. Copy the Provided Helm Values File:**
-   a. Copy the provided `my-nginx-values.yaml` file from the lab materials:
+   * Copy the provided `my-nginx-values.yaml` file from the lab materials:
       ```bash
       # Copy from the lab materials directory
       cp ../path-to-cicd-labs/ArgoCD/LAB03-Helm-Deployments/helm-values/my-nginx-values.yaml .
       ```
-   b. Your directory structure should now look like:
+   * Your directory structure should now look like:
       ```
       your-git-repo/
       └── helm-values/
           └── my-nginx-values.yaml
       ```
-   c. Review the file content - it contains configuration for replica count, service type, node port, and other nginx settings
+   * Review the file content - it contains configuration for replica count, service type, node port, and other nginx settings
 
 **4. Modify Your Custom Values:**
-   a. Open `helm-values/my-nginx-values.yaml` in your text editor
-   b. **Change the replica count:**
+   * Open `helm-values/my-nginx-values.yaml` in your text editor
+   * **Change the replica count:**
       - Find the line `replicaCount: 1`
       - Change it to `replicaCount: 2`
-   c. **Change the NodePort:**
+   * **Change the NodePort:**
       - Find the line `nodePort: 30080`
       - Change it to `nodePort: 30088`
-   d. Save the file
+   * Save the file
 
 **5. Commit and Push Your Helm Values:**
-   a. Navigate to the root of your Git repository
-   b. Add, commit, and push the Helm values file:
+   * Navigate to the root of your Git repository
+   * Add, commit, and push the Helm values file:
       ```bash
       git add helm-values/my-nginx-values.yaml
       git commit -m "Add custom nginx Helm values for LAB03"
       git push origin main
       ```
-   c. Verify the file is visible in your Git repository online
+   * Verify the file is visible in your Git repository online
 
 ### Phase 2: Deploy the Helm Chart with Argo CD
 
@@ -66,9 +66,9 @@ We will use the `bitnami/nginx` public Helm chart as our example.
    ```
 
 **7. Create the Helm Application in Argo CD:**
-   a. Open the Argo CD UI in your browser
-   b. Click **"+ NEW APP"**
-   c. Fill in the application details:
+   * Open the Argo CD UI in your browser
+   * Click **"+ NEW APP"**
+   * Fill in the application details:
       - **Application Name:** `nginx-helm-app`
       - **Project Name:** `default`
       - **SYNC POLICY:** `Manual`
@@ -77,47 +77,47 @@ We will use the `bitnami/nginx` public Helm chart as our example.
       - **SOURCE Path:** Leave blank or use `.`
       - **DESTINATION Cluster URL:** `https://kubernetes.default.svc`
       - **DESTINATION Namespace:** `nginx-helm-app`
-   d. Configure Helm parameters:
+   * Configure Helm parameters:
       - **Source Type:** Select `Helm`
       - **Chart:** `nginx`
       - **Repo URL:** `https://charts.bitnami.com/bitnami`
       - **Chart Version:** Leave blank for latest, or specify a version like `15.5.1`
       - **Values Files:** `helm-values/my-nginx-values.yaml`
-   e. Click **"CREATE"**
+   * Click **"CREATE"**
 
 **8. Synchronize the Application:**
-   a. Your new application will appear with `Missing` and `OutOfSync` status
-   b. Click on the application card to open the detailed view
-   c. Click **"SYNC"** and then **"SYNCHRONIZE"**
-   d. Watch as Argo CD deploys the Nginx application using your custom Helm values
-   e. Wait for the status to become `Healthy` and `Synced`
+   * Your new application will appear with `Missing` and `OutOfSync` status
+   * Click on the application card to open the detailed view
+   * Click **"SYNC"** and then **"SYNCHRONIZE"**
+   * Watch as Argo CD deploys the Nginx application using your custom Helm values
+   * Wait for the status to become `Healthy` and `Synced`
 
 **9. Verify the Deployment:**
-   a. Check the deployed resources:
+   * Check the deployed resources:
       ```bash
       kubectl get all -n nginx-helm-app
       ```
-   b. You should see 2 nginx pods (as per your replica count setting)
-   c. Find the service and its NodePort:
+   * You should see 2 nginx pods (as per your replica count setting)
+   * Find the service and its NodePort:
       ```bash
       kubectl get svc -n nginx-helm-app
       ```
-   d. The service should be using NodePort 30088
+   * The service should be using NodePort 30088
 
 **10. Access Your Nginx Application:**
-   a. Get your Minikube IP:
+   * Get your Minikube IP:
       ```bash
       minikube ip
       ```
-   b. Open your browser and navigate to: `http://<MINIKUBE_IP>:30088`
-   c. You should see the Nginx welcome page
+   * Open your browser and navigate to: `http://<MINIKUBE_IP>:30088`
+   * You should see the Nginx welcome page
 
 ### Phase 3: Experience the GitOps Loop with Helm
 
 **11. Make a Change via Git:**
-   a. Open `helm-values/my-nginx-values.yaml` in your local repository
-   b. Change `replicaCount: 2` to `replicaCount: 3`
-   c. Save and commit the change:
+   * Open `helm-values/my-nginx-values.yaml` in your local repository
+   * Change `replicaCount: 2` to `replicaCount: 3`
+   * Save and commit the change:
       ```bash
       git add helm-values/my-nginx-values.yaml
       git commit -m "Scale nginx to 3 replicas"
@@ -125,19 +125,19 @@ We will use the `bitnami/nginx` public Helm chart as our example.
       ```
 
 **12. Observe Argo CD Detecting the Change:**
-   a. Go back to the Argo CD UI
-   b. After a few minutes, your application should show `OutOfSync` status
-   c. Click on the application to see the detected changes
-   d. You'll see a diff showing the replica count change
+   * Go back to the Argo CD UI
+   * After a few minutes, your application should show `OutOfSync` status
+   * Click on the application to see the detected changes
+   * You'll see a diff showing the replica count change
 
 **13. Synchronize the Changes:**
-   a. Click **"SYNC"** and then **"SYNCHRONIZE"**
-   b. Watch as Argo CD applies the changes
-   c. Verify the change was applied:
+   * Click **"SYNC"** and then **"SYNCHRONIZE"**
+   * Watch as Argo CD applies the changes
+   * Verify the change was applied:
       ```bash
       kubectl get pods -n nginx-helm-app
       ```
-   d. You should now see 3 nginx pods running
+   * You should now see 3 nginx pods running
 
 ---
 
@@ -160,10 +160,10 @@ We will use the `bitnami/nginx` public Helm chart as our example.
 ## 🧹 Cleanup
 
 **1. Delete the Application from Argo CD:**
-   a. In the Argo CD UI, click on your `nginx-helm-app` application
-   b. Click the **"DELETE"** button
-   c. Check the option to **"Delete resources"** to remove Kubernetes resources
-   d. Confirm the deletion
+   * In the Argo CD UI, click on your `nginx-helm-app` application
+   * Click the **"DELETE"** button
+   * Check the option to **"Delete resources"** to remove Kubernetes resources
+   * Confirm the deletion
 
 **2. Delete the Namespace:**
    ```bash

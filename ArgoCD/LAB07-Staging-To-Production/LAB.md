@@ -11,36 +11,36 @@ We will start with understanding multi-environment strategies, then implement bo
 ### Phase 1: Copy Lab Materials and Understand Multi-Environment Architecture
 
 **1. Prepare Your Git Repository:**
-   a. Use your existing Git repository from previous labs, or create a new public repository named `multi-env-gitops-demo`
-   b. In your local clone of the repository, create the directory structure:
+   * Use your existing Git repository from previous labs, or create a new public repository named `multi-env-gitops-demo`
+   * In your local clone of the repository, create the directory structure:
       ```bash
       mkdir -p environments/{staging,production,common}
       mkdir -p argocd-apps
       ```
-   c. This structure separates environment-specific configurations while maintaining common resources
+   * This structure separates environment-specific configurations while maintaining common resources
 
 **2. Copy Kubernetes Namespaces:**
-   a. Copy staging namespace definition:
+   * Copy staging namespace definition:
       ```bash
       cp ../path-to-cicd-labs/ArgoCD/LAB07-Staging-To-Production/environments/common/namespace-staging.yaml ./environments/common/namespace-staging.yaml
       ```
    
-   b. Review staging namespace:
+   * Review staging namespace:
       ```bash
       cat environments/common/namespace-staging.yaml
       ```
    
-   c. Copy production namespace definition:
+   * Copy production namespace definition:
       ```bash
       cp ../path-to-cicd-labs/ArgoCD/LAB07-Staging-To-Production/environments/common/namespace-production.yaml ./environments/common/namespace-production.yaml
       ```
    
-   d. Review production namespace:
+   * Review production namespace:
       ```bash
       cat environments/common/namespace-production.yaml
       ```
    
-   e. Apply the namespaces to your cluster:
+   * Apply the namespaces to your cluster:
       ```bash
       kubectl apply -f environments/common/namespace-staging.yaml
       kubectl apply -f environments/common/namespace-production.yaml
@@ -56,83 +56,83 @@ We will start with understanding multi-environment strategies, then implement bo
 ### Phase 2: Copy Environment-Specific Configurations
 
 **4. Copy Staging Environment Configuration:**
-   a. Copy staging deployment:
+   * Copy staging deployment:
       ```bash
       cp ../path-to-cicd-labs/ArgoCD/LAB07-Staging-To-Production/environments/staging/deployment.yaml ./environments/staging/deployment.yaml
       ```
    
-   b. Review staging deployment:
+   * Review staging deployment:
       ```bash
       cat environments/staging/deployment.yaml
       ```
 
-   c. Copy staging service:
+   * Copy staging service:
       ```bash
       cp ../path-to-cicd-labs/ArgoCD/LAB07-Staging-To-Production/environments/staging/service.yaml ./environments/staging/service.yaml
       ```
    
-   d. Review staging service:
+   * Review staging service:
       ```bash
       cat environments/staging/service.yaml
       ```
 
-   e. Copy staging configuration:
+   * Copy staging configuration:
       ```bash
       cp ../path-to-cicd-labs/ArgoCD/LAB07-Staging-To-Production/environments/staging/configmap.yaml ./environments/staging/configmap.yaml
       ```
    
-   f. Review staging configuration:
+   * Review staging configuration:
       ```bash
       cat environments/staging/configmap.yaml
       ```
 
-   g. Copy staging horizontal pod autoscaler:
+   * Copy staging horizontal pod autoscaler:
       ```bash
       cp ../path-to-cicd-labs/ArgoCD/LAB07-Staging-To-Production/environments/staging/hpa.yaml ./environments/staging/hpa.yaml
       ```
    
-   h. Review staging HPA:
+   * Review staging HPA:
       ```bash
       cat environments/staging/hpa.yaml
       ```
 
 **5. Copy Production Environment Configuration:**
-   a. Copy production deployment (with higher resources and replicas):
+   * Copy production deployment (with higher resources and replicas):
       ```bash
       cp ../path-to-cicd-labs/ArgoCD/LAB07-Staging-To-Production/environments/production/deployment.yaml ./environments/production/deployment.yaml
       ```
    
-   b. Review production deployment:
+   * Review production deployment:
       ```bash
       cat environments/production/deployment.yaml
       ```
 
-   c. Copy production service:
+   * Copy production service:
       ```bash
       cp ../path-to-cicd-labs/ArgoCD/LAB07-Staging-To-Production/environments/production/service.yaml ./environments/production/service.yaml
       ```
    
-   d. Review production service:
+   * Review production service:
       ```bash
       cat environments/production/service.yaml
       ```
 
-   e. Copy production configuration (with production-specific settings):
+   * Copy production configuration (with production-specific settings):
       ```bash
       cp ../path-to-cicd-labs/ArgoCD/LAB07-Staging-To-Production/environments/production/configmap.yaml ./environments/production/configmap.yaml
       ```
    
-   f. Review production configuration:
+   * Review production configuration:
       ```bash
       cat environments/production/configmap.yaml
       ```
 
-   g. Copy production horizontal pod autoscaler (more aggressive scaling):
+   * Copy production horizontal pod autoscaler (more aggressive scaling):
       ```bash
       cp ../path-to-cicd-labs/ArgoCD/LAB07-Staging-To-Production/environments/production/hpa.yaml ./environments/production/hpa.yaml
       ```
    
-   h. Review production HPA:
+   * Review production HPA:
       ```bash
       cat environments/production/hpa.yaml
       ```
@@ -160,7 +160,7 @@ We will start with understanding multi-environment strategies, then implement bo
    ```
 
 **10. Update Git Repository URLs:**
-   a. Update the repository URL in both ArgoCD applications:
+   * Update the repository URL in both ArgoCD applications:
       ```bash
       # Replace with your actual Git repository URL
       GIT_REPO_URL="https://github.com/YOUR_USERNAME/multi-env-gitops-demo.git"
@@ -168,7 +168,7 @@ We will start with understanding multi-environment strategies, then implement bo
       sed -i "s|YOUR_GIT_REPO_URL_HERE|$GIT_REPO_URL|g" argocd-apps/staging-app.yaml
       sed -i "s|YOUR_GIT_REPO_URL_HERE|$GIT_REPO_URL|g" argocd-apps/production-app.yaml
       ```
-   b. Verify the URLs were updated correctly:
+   * Verify the URLs were updated correctly:
       ```bash
       grep "repoURL" argocd-apps/*.yaml
       ```
@@ -183,20 +183,20 @@ We will start with understanding multi-environment strategies, then implement bo
    ```
 
 **12. Deploy ArgoCD Applications:**
-   a. Apply the staging application:
+   * Apply the staging application:
       ```bash
       kubectl apply -f argocd-apps/staging-app.yaml
       ```
-   b. Apply the production application:
+   * Apply the production application:
       ```bash
       kubectl apply -f argocd-apps/production-app.yaml
       ```
 
 **13. Monitor Application Deployment:**
-   a. Open ArgoCD UI and verify both applications appear
-   b. Check that staging syncs automatically
-   c. Verify production requires manual sync (safety measure)
-   d. Monitor the sync status:
+   * Open ArgoCD UI and verify both applications appear
+   * Check that staging syncs automatically
+   * Verify production requires manual sync (safety measure)
+   * Monitor the sync status:
       ```bash
       kubectl get applications -n argocd
       kubectl describe application webapp-staging -n argocd
@@ -204,29 +204,29 @@ We will start with understanding multi-environment strategies, then implement bo
       ```
 
 **14. Verify Environment Separation:**
-   a. Check staging deployment:
+   * Check staging deployment:
       ```bash
       kubectl get pods -n webapp-staging
       kubectl get services -n webapp-staging
       kubectl get configmaps -n webapp-staging
       kubectl get hpa -n webapp-staging
       ```
-   b. Check production deployment:
+   * Check production deployment:
       ```bash
       kubectl get pods -n webapp-production
       kubectl get services -n webapp-production
       kubectl get configmaps -n webapp-production
       kubectl get hpa -n webapp-production
       ```
-   c. Notice the different resource allocations and replica counts
+   * Notice the different resource allocations and replica counts
 
 **15. Test Applications:**
-   a. Test staging application:
+   * Test staging application:
       ```bash
       minikube ip  # Get Minikube IP
       curl http://<MINIKUBE_IP>:30080/
       ```
-   b. Test production application:
+   * Test production application:
       ```bash
       curl http://<MINIKUBE_IP>:30090/
       ```
@@ -234,82 +234,82 @@ We will start with understanding multi-environment strategies, then implement bo
 ### Phase 5: Implement Environment Promotion Workflow
 
 **16. Test Configuration Differences:**
-   a. Check staging configuration:
+   * Check staging configuration:
       ```bash
       kubectl get configmap webapp-config -n webapp-staging -o yaml
       ```
-   b. Check production configuration:
+   * Check production configuration:
       ```bash
       kubectl get configmap webapp-config -n webapp-production -o yaml
       ```
-   c. Notice the different values for log_level, max_connections, and feature_flags
+   * Notice the different values for log_level, max_connections, and feature_flags
 
 **17. Simulate Configuration Update in Staging:**
-   a. Update staging configuration:
+   * Update staging configuration:
       ```bash
       kubectl patch configmap webapp-config -n webapp-staging --patch '{"data":{"feature_flags":"feature_a=true,feature_b=true,feature_c=true"}}'
       ```
-   b. Restart staging deployment to pick up changes:
+   * Restart staging deployment to pick up changes:
       ```bash
       kubectl rollout restart deployment webapp -n webapp-staging
       ```
-   c. Monitor rollout:
+   * Monitor rollout:
       ```bash
       kubectl rollout status deployment webapp -n webapp-staging
       ```
 
 **18. Test Environment-Specific Scaling:**
-   a. Generate load on staging (simulate traffic):
+   * Generate load on staging (simulate traffic):
       ```bash
       kubectl run load-generator --image=busybox --restart=Never --rm -i --tty -- sh -c "while true; do wget -q -O- http://webapp-service.webapp-staging.svc.cluster.local:80; done"
       ```
-   b. In another terminal, watch HPA scaling:
+   * In another terminal, watch HPA scaling:
       ```bash
       kubectl get hpa webapp-hpa -n webapp-staging --watch
       ```
-   c. Stop the load generator with Ctrl+C and watch scaling down
+   * Stop the load generator with Ctrl+C and watch scaling down
 
 ### Phase 6: Multi-Environment Promotion Workflow
 
 **19. Implement Staged Rollout Process:**
-   a. Update the application image in staging:
+   * Update the application image in staging:
       ```bash
       kubectl patch deployment webapp -n webapp-staging --patch '{"spec":{"template":{"spec":{"containers":[{"name":"webapp","image":"nginx:1.22"}]}}}}'
       ```
-   b. Verify the update in staging:
+   * Verify the update in staging:
       ```bash
       kubectl rollout status deployment webapp -n webapp-staging
       kubectl get deployment webapp -n webapp-staging -o jsonpath='{.spec.template.spec.containers[0].image}'
       ```
 
 **20. Test Staging After Update:**
-   a. Verify staging is working correctly:
+   * Verify staging is working correctly:
       ```bash
       curl http://<MINIKUBE_IP>:30080/
       kubectl get pods -n webapp-staging
       ```
-   b. Check application logs:
+   * Check application logs:
       ```bash
       kubectl logs -l app=webapp -n webapp-staging --tail=10
       ```
 
 **21. Promote Changes to Production:**
-   a. After validating staging, update production deployment:
+   * After validating staging, update production deployment:
       ```bash
       kubectl patch deployment webapp -n webapp-production --patch '{"spec":{"template":{"spec":{"containers":[{"name":"webapp","image":"nginx:1.22"}]}}}}'
       ```
-   b. Monitor production rollout carefully:
+   * Monitor production rollout carefully:
       ```bash
       kubectl rollout status deployment webapp -n webapp-production --timeout=300s
       ```
-   c. Verify production application:
+   * Verify production application:
       ```bash
       curl http://<MINIKUBE_IP>:30090/
       kubectl get pods -n webapp-production
       ```
 
 **22. Implement GitOps-Based Promotion:**
-   a. Instead of kubectl patches, update the Git repository:
+   * Instead of kubectl patches, update the Git repository:
       ```bash
       # Update staging deployment file
       sed -i 's|nginx:1.21|nginx:1.22|g' environments/staging/deployment.yaml
@@ -319,8 +319,8 @@ We will start with understanding multi-environment strategies, then implement bo
       git commit -m "Update staging to nginx:1.22"
       git push origin main
       ```
-   b. Watch ArgoCD sync the changes automatically
-   c. After staging validation, promote to production:
+   * Watch ArgoCD sync the changes automatically
+   * After staging validation, promote to production:
       ```bash
       # Update production deployment file
       sed -i 's|nginx:1.21|nginx:1.22|g' environments/production/deployment.yaml
@@ -330,52 +330,52 @@ We will start with understanding multi-environment strategies, then implement bo
       git commit -m "Promote nginx:1.22 to production"
       git push origin main
       ```
-   d. Manually sync production in ArgoCD UI
+   * Manually sync production in ArgoCD UI
 
 ### Phase 7: Environment Comparison and Validation
 
 **23. Compare Environment Configurations:**
-   a. Compare deployment configurations:
+   * Compare deployment configurations:
       ```bash
       diff environments/staging/deployment.yaml environments/production/deployment.yaml
       ```
-   b. Compare service configurations:
+   * Compare service configurations:
       ```bash
       diff environments/staging/service.yaml environments/production/service.yaml
       ```
-   c. Compare ConfigMap configurations:
+   * Compare ConfigMap configurations:
       ```bash
       diff environments/staging/configmap.yaml environments/production/configmap.yaml
       ```
 
 **24. Validate Environment Isolation:**
-   a. Check resource usage in staging:
+   * Check resource usage in staging:
       ```bash
       kubectl top pods -n webapp-staging
       kubectl describe hpa webapp-hpa -n webapp-staging
       ```
-   b. Check resource usage in production:
+   * Check resource usage in production:
       ```bash
       kubectl top pods -n webapp-production
       kubectl describe hpa webapp-hpa -n webapp-production
       ```
 
 **25. Test Rollback Scenarios:**
-   a. Simulate a bad deployment in staging:
+   * Simulate a bad deployment in staging:
       ```bash
       kubectl patch deployment webapp -n webapp-staging --patch '{"spec":{"template":{"spec":{"containers":[{"name":"webapp","image":"nginx:invalid-tag"}]}}}}'
       ```
-   b. Watch the rollout fail:
+   * Watch the rollout fail:
       ```bash
       kubectl rollout status deployment webapp -n webapp-staging --timeout=60s
       kubectl get pods -n webapp-staging
       ```
-   c. Rollback staging:
+   * Rollback staging:
       ```bash
       kubectl rollout undo deployment webapp -n webapp-staging
       kubectl rollout status deployment webapp -n webapp-staging
       ```
-   d. Verify staging is back to working state:
+   * Verify staging is back to working state:
       ```bash
       curl http://<MINIKUBE_IP>:30080/
       ```
@@ -383,14 +383,14 @@ We will start with understanding multi-environment strategies, then implement bo
 ### Phase 8: Advanced Multi-Environment Features
 
 **26. Implement Environment-Specific Secrets:**
-   a. Create staging secret:
+   * Create staging secret:
       ```bash
       kubectl create secret generic webapp-secrets \
         --from-literal=api-key="staging-api-key-123" \
         --from-literal=db-password="staging-db-pass" \
         -n webapp-staging
       ```
-   b. Create production secret:
+   * Create production secret:
       ```bash
       kubectl create secret generic webapp-secrets \
         --from-literal=api-key="production-api-key-456" \
@@ -399,28 +399,28 @@ We will start with understanding multi-environment strategies, then implement bo
       ```
 
 **27. Test Environment-Specific Monitoring:**
-   a. Check staging metrics:
+   * Check staging metrics:
       ```bash
       kubectl get events -n webapp-staging --sort-by='.lastTimestamp'
       kubectl describe deployment webapp -n webapp-staging
       ```
-   b. Check production metrics:
+   * Check production metrics:
       ```bash
       kubectl get events -n webapp-production --sort-by='.lastTimestamp'
       kubectl describe deployment webapp -n webapp-production
       ```
 
 **28. Validate Complete Multi-Environment Setup:**
-   a. Verify both environments are running:
+   * Verify both environments are running:
       ```bash
       kubectl get all -n webapp-staging
       kubectl get all -n webapp-production
       ```
-   b. Check ArgoCD application health:
+   * Check ArgoCD application health:
       ```bash
       kubectl get applications -n argocd -o custom-columns=NAME:.metadata.name,HEALTH:.status.health.status,SYNC:.status.sync.status
       ```
-   c. Test both applications are accessible:
+   * Test both applications are accessible:
       ```bash
       echo "Testing Staging:"
       curl -s http://<MINIKUBE_IP>:30080/ | head -5
@@ -451,10 +451,10 @@ We will start with understanding multi-environment strategies, then implement bo
 ## 🧹 Cleanup
 
 **29. Delete ArgoCD Applications:**
-   a. In the ArgoCD UI, delete both applications:
+   * In the ArgoCD UI, delete both applications:
       - Click on `webapp-staging` → DELETE → Check "Delete resources" → Confirm
       - Click on `webapp-production` → DELETE → Check "Delete resources" → Confirm
-   b. Alternatively, use kubectl:
+   * Alternatively, use kubectl:
       ```bash
       kubectl delete application webapp-staging -n argocd
       kubectl delete application webapp-production -n argocd

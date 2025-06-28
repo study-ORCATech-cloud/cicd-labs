@@ -59,13 +59,13 @@ We will start by setting up basic RBAC, then configure multiple SSO providers, c
 ### Phase 3: Copy and Configure GitHub SSO Integration
 
 **8. Create GitHub OAuth Application:**
-   a. Go to GitHub → Settings → Developer settings → OAuth Apps
-   b. Click "New OAuth App"
-   c. Fill in the details:
+   * Go to GitHub → Settings → Developer settings → OAuth Apps
+   * Click "New OAuth App"
+   * Fill in the details:
       - Application name: `ArgoCD Lab10`
       - Homepage URL: `http://localhost:8080` (or your ArgoCD URL)
       - Authorization callback URL: `http://localhost:8080/api/dex/callback`
-   d. Save the Client ID and Client Secret
+   * Save the Client ID and Client Secret
 
 **9. Copy GitHub SSO Configuration:**
    ```bash
@@ -242,17 +242,17 @@ We will start by setting up basic RBAC, then configure multiple SSO providers, c
 ### Phase 10: Testing and Validation
 
 **36. Test ArgoCD UI Access:**
-   a. Port forward ArgoCD server:
+   * Port forward ArgoCD server:
       ```bash
       kubectl port-forward svc/argocd-server -n argocd 8080:443 &
       ```
-   b. Open browser to `http://localhost:8080`
-   c. You should see SSO login options (GitHub) alongside local login
+   * Open browser to `http://localhost:8080`
+   * You should see SSO login options (GitHub) alongside local login
 
 **37. Test SSO Login:**
-   a. Click "Login via GitHub"
-   b. Complete OAuth flow
-   c. Verify you're logged in with appropriate permissions based on GitHub org/team membership
+   * Click "Login via GitHub"
+   * Complete OAuth flow
+   * Verify you're logged in with appropriate permissions based on GitHub org/team membership
 
 **38. Use RBAC Testing Script:**
    ```bash
@@ -262,9 +262,9 @@ We will start by setting up basic RBAC, then configure multiple SSO providers, c
    ```
 
 **39. Test Project-Level Access:**
-   a. Log in as different users (if configured)
-   b. Verify project-specific access controls
-   c. Test application creation in different projects
+   * Log in as different users (if configured)
+   * Verify project-specific access controls
+   * Test application creation in different projects
 
 **40. Validate Security Policies:**
    ```bash
@@ -286,15 +286,15 @@ We will start by setting up basic RBAC, then configure multiple SSO providers, c
    ```
 
 **42. Advanced Security Testing:**
-   a. Test API access with different authentication methods:
+   * Test API access with different authentication methods:
       ```bash
       # Test with bearer token
       ARGOCD_TOKEN=$(argocd account generate-token --account admin)
       curl -H "Authorization: Bearer $ARGOCD_TOKEN" http://localhost:8080/api/v1/applications
       ```
-   b. Test unauthorized access attempts
-   c. Verify session timeouts work correctly
-   d. Test password policy enforcement (if using local accounts)
+   * Test unauthorized access attempts
+   * Verify session timeouts work correctly
+   * Test password policy enforcement (if using local accounts)
 
 ---
 
@@ -327,11 +327,11 @@ We will start by setting up basic RBAC, then configure multiple SSO providers, c
    ```
 
 **44. Manual Cleanup (Alternative):**
-   a. Stop port forwarding:
+   * Stop port forwarding:
       ```bash
       pkill -f "port-forward"
       ```
-   b. Remove any remaining security configurations:
+   * Remove any remaining security configurations:
       ```bash
       kubectl delete configmap -n argocd -l "app.kubernetes.io/part-of=argocd-security"
       ```
@@ -344,8 +344,8 @@ We will start by setting up basic RBAC, then configure multiple SSO providers, c
    ```
 
 **46. Reset GitHub OAuth Application:**
-   a. Go to GitHub → Settings → Developer settings → OAuth Apps
-   b. Delete or disable the OAuth application created for this lab
+   * Go to GitHub → Settings → Developer settings → OAuth Apps
+   * Delete or disable the OAuth application created for this lab
 
 **47. Clean Up Local Files:**
    ```bash
