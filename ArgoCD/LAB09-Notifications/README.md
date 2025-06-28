@@ -65,9 +65,9 @@ ArgoCD/LAB09-Notifications/
 │   ├── slack-webhook-secret.yaml               # Slack webhook URL secret (optional)
 │   └── webhook-tokens-secret.yaml              # Webhook authentication tokens
 ├── test-scenarios/
-│   ├── test-app-healthy.yaml                   # Test application for health events
-│   ├── test-app-sync-failed.yaml               # Test application for sync failures
-│   └── test-app-degraded.yaml                  # Test application for degraded health
+│   ├── test-app-healthy.yaml                   # Test application for health events (deploys to test-notifications namespace)
+│   ├── test-app-sync-failed.yaml               # Test application for sync failures (deploys to test-notifications-fail namespace)
+│   └── test-app-production.yaml                # Test application for production alerts (deploys to test-notifications-prod namespace)
 ├── scripts/
 │   ├── setup-notifications.sh                  # Automated setup script
 │   ├── test-notifications.sh                   # Script to test notification delivery
@@ -111,6 +111,7 @@ In summary:
 - **Notification Delivery Monitoring:** Tracking and troubleshooting notification delivery issues
 - **Security Considerations:** Secure handling of webhook URLs, tokens, and sensitive notification data
 - **Integration Patterns:** Common patterns for integrating notifications with incident management tools
+- **Namespace Management:** Automatic namespace creation using ArgoCD's CreateNamespace syncOption
 
 ---
 
@@ -142,8 +143,8 @@ This lab addresses common production notification requirements:
 - Compliance and audit trail notifications
 
 ### **Multi-Environment Strategy:**
-- Staging: Detailed technical notifications to development teams
-- Production: High-level business notifications to stakeholders
+- Staging: Detailed technical notifications to development teams (test-notifications namespace)
+- Production: High-level business notifications to stakeholders (test-notifications-prod namespace)
 - Critical: Immediate escalation for outages and security issues
 
 ---

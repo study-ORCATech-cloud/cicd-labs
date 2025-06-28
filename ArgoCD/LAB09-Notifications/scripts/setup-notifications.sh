@@ -16,12 +16,23 @@ kubectl apply -f notification-controller/argocd-notifications-controller.yaml
 echo "3. Applying secrets..."
 kubectl apply -f secrets/email-credentials-secret.yaml
 
+# Apply notification templates and triggers
+echo "4. Applying notification templates..."
+kubectl apply -f notification-configs/templates/app-sync-templates.yaml
+kubectl apply -f notification-configs/templates/app-health-templates.yaml
+kubectl apply -f notification-configs/templates/environment-templates.yaml
+
+echo "5. Applying notification triggers..."
+kubectl apply -f notification-configs/triggers/production-triggers.yaml
+kubectl apply -f notification-configs/triggers/staging-triggers.yaml
+kubectl apply -f notification-configs/triggers/global-triggers.yaml
+
 # Apply notifications configuration
-echo "4. Applying notifications configuration..."
+echo "6. Applying master notifications configuration..."
 kubectl apply -f notification-configs/master-notifications-config.yaml
 
 # Wait for controller to be ready
-echo "5. Waiting for controller to be ready..."
+echo "7. Waiting for controller to be ready..."
 kubectl wait --for=condition=available --timeout=300s deployment/argocd-notifications-controller -n argocd
 
 echo "✅ ArgoCD Notifications setup complete!"

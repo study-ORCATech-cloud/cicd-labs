@@ -13,7 +13,7 @@ data:
         
         *Environment:* {{.app.metadata.labels.environment | default "unknown"}}
         *Repository:* {{.app.spec.source.repoURL}}
-        *Revision:* {{.app.status.sync.revision | truncate 8}}
+        *Revision:* {{.app.status.sync.revision | trunc 8}}
         *Health:* {{.app.status.health.status}}
       color: "good"
       attachments: |
@@ -29,12 +29,12 @@ data:
             },
             {
               "title": "Revision",
-              "value": "{{.app.status.sync.revision | truncate 8}}",
+              "value": "{{.app.status.sync.revision | trunc 8}}",
               "short": true
             },
             {
               "title": "Environment",
-              "value": "{{.app.metadata.labels.environment | default \"unknown\"}}",
+              "value": {{.app.metadata.labels.environment | default "unknown"}},
               "short": true
             },
             {
@@ -47,13 +47,13 @@ data:
   
   # Slack template for sync failure
   template.app-sync-failed: |
-    slack:
+    email:
       title: "❌ Application Sync Failed"
       text: |
         Application **{{.app.metadata.name}}** failed to sync in **{{.app.spec.destination.namespace}}**.
         
         *Environment:* {{.app.metadata.labels.environment | default "unknown"}}
-        *Error:* {{.app.status.operationState.message | truncate 100}}
+        *Error:* {{.app.status.operationState.message | trunc 100}}
         *Repository:* {{.app.spec.source.repoURL}}
       color: "danger"
       attachments: |
@@ -64,7 +64,7 @@ data:
           "fields": [
             {
               "title": "Error Message",
-              "value": "{{.app.status.operationState.message | truncate 200}}",
+              "value": "{{.app.status.operationState.message | trunc 200}}",
               "short": false
             },
             {
@@ -74,7 +74,7 @@ data:
             },
             {
               "title": "Environment",
-              "value": "{{.app.metadata.labels.environment | default \"unknown\"}}",
+              "value": {{.app.metadata.labels.environment | default "unknown"}},
               "short": true
             }
           ]
