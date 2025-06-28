@@ -38,7 +38,7 @@ This document provides the detailed step-by-step instructions for completing Lab
       *   **DESTINATION Cluster URL:** Select `https://kubernetes.default.svc` (this represents the same cluster where Argo CD is running).
       *   **DESTINATION Namespace:** `guestbook`
 
-   <br>c. After filling in these details, click the **"CREATE"** button at the top of the form.
+   c. After filling in these details, click the **"CREATE"** button at the top of the form.
 
 **4. Observe Application Status in Argo CD:**
    <br>a. You should now see a new card for the `guestbook` application on the Argo CD dashboard.
