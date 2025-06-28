@@ -33,7 +33,7 @@ This document provides the detailed step-by-step instructions for completing Lab
           https://github.com/argoproj/argocd-example-apps.git
           ```
       *   **SOURCE Revision:** `HEAD`
-      *   **SOURCE Path:** `guestbook`
+      *   **SOURCE Path:** `helm-guestbook`
 
       *   **DESTINATION Cluster URL:** Select `https://kubernetes.default.svc` (this represents the same cluster where Argo CD is running).
       *   **DESTINATION Namespace:** `guestbook`
