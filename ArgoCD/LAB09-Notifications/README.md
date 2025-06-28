@@ -2,7 +2,7 @@
 
 Welcome to Lab 09! You've mastered end-to-end CI/CD integration with GitOps workflows. Now it's time to implement **comprehensive monitoring and alerting** for your ArgoCD deployments to ensure your team stays informed about application sync events, health changes, and deployment failures.
 
-In production environments, silent failures are dangerous. This lab will teach you how to configure ArgoCD notifications to alert your team via multiple channels (Slack, email, webhooks) for various events, ensuring your GitOps workflows are observable and reliable.
+In production environments, silent failures are dangerous. This lab will teach you how to configure ArgoCD notifications to alert your team via multiple channels (email, Slack, webhooks) for various events, ensuring your GitOps workflows are observable and reliable. We'll start with email as the primary notification method since it's universally accessible to all students.
 
 For detailed step-by-step instructions to complete this lab, please refer to **[./LAB.md](./LAB.md)**.
 
@@ -12,7 +12,8 @@ For detailed step-by-step instructions to complete this lab, please refer to **[
 
 By the end of this lab, you will be able to:
 - Install and configure ArgoCD Notifications Controller for comprehensive alerting
-- Set up multiple notification channels (Slack, email, webhooks, Microsoft Teams)
+- Set up email notifications as the primary alerting method with proper SMTP configuration
+- Set up additional notification channels (Slack, webhooks, Microsoft Teams) as advanced options
 - Create custom notification templates for different event types and environments
 - Configure intelligent triggering based on application health, sync status, and deployment events
 - Implement environment-specific notification routing (staging vs production alerts)
@@ -28,8 +29,8 @@ By the end of this lab, you will be able to:
 - **Completion of LAB01-LAB08:** Strong foundation in ArgoCD operations, GitOps workflows, and CI/CD integration
 - **Minikube and Argo CD Running:** As per the `ArgoCD/install-and-setup.md` guide with sufficient resources
 - **`kubectl` Configured:** Pointing to your Minikube cluster
-- **Slack Workspace Access:** For Slack notification setup (create free workspace if needed)
-- **Email Account:** For email notification testing (Gmail or similar)
+- **Email Account:** For email notification setup (Gmail, Outlook, Yahoo, or similar with app password support)
+- **Slack Workspace Access:** Optional for advanced Slack integration (create free workspace if needed)
 - **ArgoCD Applications:** Existing applications from previous labs or new test applications
 - **Basic Understanding:** Of webhook URLs, JSON payloads, and notification systems
 
@@ -60,13 +61,13 @@ ArgoCD/LAB09-Notifications/
 │       ├── staging-triggers.yaml               # Staging environment triggers
 │       └── global-triggers.yaml                # Global triggers for all apps
 ├── secrets/
-│   ├── slack-webhook-secret.yaml               # Slack webhook URL secret
-│   ├── email-credentials-secret.yaml           # Email SMTP credentials
+│   ├── email-credentials-secret.yaml           # Email SMTP credentials (primary method)
+│   ├── slack-webhook-secret.yaml               # Slack webhook URL secret (optional)
 │   └── webhook-tokens-secret.yaml              # Webhook authentication tokens
 ├── test-scenarios/
-│   ├── test-app-healthy.yaml                   # Test application for health events
-│   ├── test-app-sync-failed.yaml               # Test application for sync failures
-│   └── test-app-degraded.yaml                  # Test application for degraded health
+│   ├── test-app-healthy.yaml                   # Test application for health events (deploys to test-notifications namespace)
+│   ├── test-app-sync-failed.yaml               # Test application for sync failures (deploys to test-notifications-fail namespace)
+│   └── test-app-production.yaml                # Test application for production alerts (deploys to test-notifications-prod namespace)
 ├── scripts/
 │   ├── setup-notifications.sh                  # Automated setup script
 │   ├── test-notifications.sh                   # Script to test notification delivery
@@ -89,10 +90,10 @@ Detailed cleanup instructions are provided at the end of **[./LAB.md](./LAB.md)*
 
 In summary:
 1. Delete notification controller and custom resources
-2. Remove notification secrets and configuration
+2. Remove email credentials and notification configuration
 3. Clean up test applications and notification triggers
 4. Optionally reset ArgoCD to default notification settings
-5. Remove webhook integrations and external service connections
+5. Remove webhook integrations and external service connections (if configured)
 
 ---
 
@@ -101,7 +102,7 @@ In summary:
 - **ArgoCD Notifications Controller:** Dedicated controller for managing notifications and alerting in ArgoCD
 - **Notification Templates:** Customizable message templates for different events and channels
 - **Triggers and Subscriptions:** Rules that determine when and how notifications are sent
-- **Multi-Channel Integration:** Supporting Slack, email, webhooks, Microsoft Teams, and custom integrations
+- **Multi-Channel Integration:** Supporting email (primary), Slack, webhooks, Microsoft Teams, and custom integrations
 - **Event-Driven Alerting:** Notifications based on application health, sync status, and deployment events
 - **Environment-Specific Routing:** Different notification strategies for staging vs production environments
 - **Alert Fatigue Prevention:** Intelligent filtering and escalation to avoid overwhelming teams
@@ -110,6 +111,7 @@ In summary:
 - **Notification Delivery Monitoring:** Tracking and troubleshooting notification delivery issues
 - **Security Considerations:** Secure handling of webhook URLs, tokens, and sensitive notification data
 - **Integration Patterns:** Common patterns for integrating notifications with incident management tools
+- **Namespace Management:** Automatic namespace creation using ArgoCD's CreateNamespace syncOption
 
 ---
 
@@ -141,8 +143,8 @@ This lab addresses common production notification requirements:
 - Compliance and audit trail notifications
 
 ### **Multi-Environment Strategy:**
-- Staging: Detailed technical notifications to development teams
-- Production: High-level business notifications to stakeholders
+- Staging: Detailed technical notifications to development teams (test-notifications namespace)
+- Production: High-level business notifications to stakeholders (test-notifications-prod namespace)
 - Critical: Immediate escalation for outages and security issues
 
 ---

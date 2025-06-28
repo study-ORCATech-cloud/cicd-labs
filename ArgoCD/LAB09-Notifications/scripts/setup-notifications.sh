@@ -14,10 +14,10 @@ kubectl apply -f notification-controller/argocd-notifications-controller.yaml
 
 # Apply secrets
 echo "3. Applying secrets..."
-kubectl apply -f secrets/slack-webhook-secret.yaml
+kubectl apply -f secrets/email-credentials-secret.yaml
 
 # Apply notifications configuration
-echo "4. Applying notifications configuration..."
+echo "4. Applying master notifications configuration..."
 kubectl apply -f notification-configs/master-notifications-config.yaml
 
 # Wait for controller to be ready

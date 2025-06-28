@@ -25,5 +25,5 @@ echo "4. Deploying failing app to test failure notifications..."
 kubectl apply -f test-scenarios/test-app-sync-failed.yaml
 
 echo "✅ Test applications deployed!"
-echo "💡 Check your Slack channel for notifications"
+echo "💡 Check your email inbox for notifications"
 echo "💡 Monitor with: kubectl logs -n argocd deployment/argocd-notifications-controller" 
